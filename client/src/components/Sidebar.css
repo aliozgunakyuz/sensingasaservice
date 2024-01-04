@@ -1,0 +1,25 @@
+.sidebar {
+    background-color: #333;
+    color: white;
+    padding: 20px;
+    position: fixed;
+    top: 50px; /* Offset to the height of the navigation bar */
+    bottom: 0;
+    width: 250px; /* Sidebar width */
+    overflow: auto; /* Scrollable sidebar */
+    z-index: 500; /* Lower than navigation bar but above other content */
+  }
+  
+  .sidebar-link {
+    display: block;
+    color: white;
+    padding: 10px;
+    text-decoration: none;
+    transition: background 0.3s;
+  }
+  
+  .sidebar-link.active,
+  .sidebar-link:hover {
+    background-color: #555; /* Highlight color for active/hover state */
+  }
+  
