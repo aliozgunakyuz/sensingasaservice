@@ -1,18 +1,25 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function SensorsPage({ onPictureSelect }) {
   const [detections, setDetections] = useState([]);
   const [selectedPicture, setSelectedPicture] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [selectedPictureId, setSelectedPictureId] = useState(null);
+  const navigate = useNavigate();
 
 
   const picSelect = (picture) => {
     setSelectedPicture(picture);
     setPreviewUrl(picture.src); // Set the preview URL to the picture's source
     setSelectedPictureId(picture.id); // Track the selected picture's ID
+    onPictureSelect(picture);
   };
   
+  const handleNavigateToML = () => {
+    // Navigate to the ML Algorithms page
+    navigate('/ml-algorithms');
+  };
 
   const handleUpload = () => {
     if (selectedPicture) {
@@ -58,8 +65,6 @@ function SensorsPage({ onPictureSelect }) {
     gridTemplateColumns: 'repeat(5, 1fr)',
     gap: '10px',
   };
-
-
 
   const imageStyle = {
     width: '100%',
@@ -118,26 +123,17 @@ function SensorsPage({ onPictureSelect }) {
                 style={selectButtonStyle(picture.id)}
                 onClick={() => picSelect(picture)}
             >
-                Select Image
+                Select Sensor
             </button>
             </div>
         ))}
         </div>
+        {selectedPicture && (
+              <div style={buttonContainerStyle}>
+                  <button style={seeResultsButtonStyle} onClick={handleNavigateToML}>Go to Machine Learning Algorithm Selection</button>
+              </div>
+        )}
 
-        <div style={buttonContainerStyle}>
-            <button style={seeResultsButtonStyle} onClick={handleUpload}>See Results</button>
-        </div>
-
-      <div>
-        <h2>YOLO Results:</h2>
-        <ul>
-          {detections.map((det, index) => (
-            <li key={index}>
-              Class: {det.class_name}, Confidence: {det.confidence}, BBox: {det.bbox.join(', ')}
-            </li>
-          ))}
-        </ul>
-      </div>
     </div>
   );
 }
