@@ -21,7 +21,7 @@ function App() {
         <Routes>
           <Route path="/" element={<DashboardPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/data" element={<DataPage />} />
+
           <Route path="/sensors" element={<SensorsPage onPictureSelect={setSelectedPicture} />} />
           <Route path="/ml-algorithms" element={<MLAlgorithmsPage selectedPicture={selectedPicture} />} />
         </Routes>
