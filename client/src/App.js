@@ -9,7 +9,7 @@ import SensorsPage from './pages/SensorsPage';
 import MLAlgorithmsPage from './pages/MLAlgorithmsPage';
 
 function App() {
-  const [selectedPicture, setSelectedPicture] = useState(null);
+  const [selectedVideo, setSelectedVideo] = useState(null);
 
 
   return (
@@ -22,8 +22,8 @@ function App() {
           <Route path="/" element={<DashboardPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
 
-          <Route path="/sensors" element={<SensorsPage onPictureSelect={setSelectedPicture} />} />
-          <Route path="/ml-algorithms" element={<MLAlgorithmsPage selectedPicture={selectedPicture} />} />
+          <Route path="/sensors" element={<SensorsPage onVideoSelect={setSelectedVideo} />} />
+          <Route path="/ml-algorithms" element={<MLAlgorithmsPage selectedVideo={selectedVideo} />} />
         </Routes>
       </main>
 

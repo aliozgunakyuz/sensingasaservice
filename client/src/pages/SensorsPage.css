@@ -1,0 +1,66 @@
+/* SensorsPage.css */
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100vh;
+  }
+  
+  .header {
+    text-align: center;
+    background-color: #f0f0f0;
+    padding: 1em 0;
+  }
+  
+  .cameras {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1em;
+    padding: 1em;
+    text-align: center;
+  }
+  
+  .camera {
+    border: 0.0625em solid #d0d0d0;
+    padding: 0.5em;
+    cursor: pointer;
+    background-color: #fff;
+  }
+  
+  .camera.selected {
+    border-color: blue;
+  }
+  
+  .camera .video {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  .cameraName {
+    margin-top: 0.5em;
+  }
+  
+  .navigation {
+    display: flex;
+    justify-content: space-between;
+    padding: 1em;
+    background-color: #f0f0f0;
+  }
+  
+  .button {
+    padding: 0.625em 1.25em;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .buttonExit {
+    background-color: #dc3545;
+    color: white;
+  }
+  
+  .button:not(.buttonExit) {
+    background-color: #007bff;
+    color: white;
+  }
+  

@@ -1,7 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const app = express();
-const port = 8000;
+const port = 8001;
 const cors = require('cors');
 
 app.use(cors()); // CORS middleware'i ekleyin

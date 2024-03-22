@@ -1,7 +1,7 @@
 FROM python:3.9.7
 
 # set a directory for the app
-WORKDIR /Users/sermetozgu/Desktop/ENS491/demoproject/Yolo/app
+WORKDIR /Users/ozgun/Desktop/sensingasaservice/Yolo/app
 
 # copy all the files to the container
 COPY . .

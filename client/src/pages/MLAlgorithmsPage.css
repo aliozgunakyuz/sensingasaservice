@@ -1,44 +1,59 @@
+/* MLAlgorithmsPage.css */
 .ml-page-container {
-    padding: 20px;
-  }
-  
-  .ml-algorithm-select-container {
-    margin-bottom: 20px;
-  }
-  
-  .ml-algorithm-select {
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    font-size: 16px;
-    margin-right: 10px;
-  }
-  
-  .ml-algorithm-select:focus {
-    outline: none;
-    border-color: #007bff;
-    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
-  }
-  
-  .ml-algorithm-button {
-    padding: 10px 20px;
-    border-radius: 5px;
-    border: none;
-    background-color: #007bff;
-    color: white;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .ml-algorithm-button:hover {
-    background-color: #0056b3;
-  }
-  
-  .results-container {
-    margin-top: 20px;
-    padding: 15px;
-    background-color: #f8f8f8;
-    border-left: 3px solid #007bff;
-  }
-  
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100vh;
+}
+
+.header {
+  text-align: center;
+  background-color: #f0f0f0;
+  padding: 1em 0;
+}
+
+.algorithm-selection h2 {
+  text-align: center;
+  margin: 1em 0;
+}
+
+.algorithms {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1em;
+  padding: 1em;
+}
+
+.algorithm {
+  border: 0.0625em solid #d0d0d0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 10vh; /* Adjust the height as needed */
+  cursor: pointer;
+  background-color: #fff;
+}
+
+.algorithm.selected {
+  border-color: blue;
+  border-width: 0.125em;
+}
+
+.navigation {
+  display: flex;
+  justify-content: space-between;
+  padding: 1em;
+  background-color: #f0f0f0;
+}
+
+.button {
+  padding: 0.625em 1.25em;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.button:hover {
+  background-color: #007bff;
+  color: white;
+}

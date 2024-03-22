@@ -1,19 +1,20 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import './SensorsPage.css';
 
-function SensorsPage({ onPictureSelect }) {
-  const [detections, setDetections] = useState([]);
-  const [selectedPicture, setSelectedPicture] = useState(null);
+function SensorsPage({ onVideoSelect }) {
+  const [selectedVideo, setSelectedVideo] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
-  const [selectedPictureId, setSelectedPictureId] = useState(null);
+  const [selectedVideoId, setSelectedVideoId] = useState(null);
   const navigate = useNavigate();
+  const [detections, setDetections] = useState([]);
 
-
-  const picSelect = (picture) => {
-    setSelectedPicture(picture);
-    setPreviewUrl(picture.src); // Set the preview URL to the picture's source
-    setSelectedPictureId(picture.id); // Track the selected picture's ID
-    onPictureSelect(picture);
+  const videoSelect = (video) => {
+    setSelectedVideo(video);
+    setPreviewUrl(video.src); // Set the preview URL to the video's source
+    setSelectedVideoId(video.id); // Track the selected video's ID
+    onVideoSelect(video);
+    setDetections([]);
   };
   
   const handleNavigateToML = () => {
@@ -22,14 +23,14 @@ function SensorsPage({ onPictureSelect }) {
   };
 
   const handleUpload = () => {
-    if (selectedPicture) {
-      fetch(selectedPicture.src)
+    if (selectedVideo) {
+      fetch(selectedVideo.src)
         .then(response => response.blob())
         .then(blob => {
           const formData = new FormData();
-          formData.append('file', new File([blob], selectedPicture.alt));
+          formData.append('file', new File([blob], selectedVideo.name, { type: 'mp4' }));
 
-          return fetch('http://localhost:5001/upload', {
+          return fetch('http://localhost:5001/upload_video', {
             method: 'POST',
             body: formData,
           });
@@ -38,104 +39,58 @@ function SensorsPage({ onPictureSelect }) {
         .then(data => {
           console.log("YOLO Results:", data);
           setDetections(data);
+          // You might want to handle video detections differently
         })
         .catch(error => console.error('Error:', error));
     } else {
-      console.error('No picture selected');
+      console.error('No video selected');
     }
   };
 
-  const pictures = [
-    // Replace these with your actual picture data
-    { id: 1, src: 'https://miro.medium.com/v2/resize:fit:1400/1*EYFejGUjvjPcc4PZTwoufw.jpeg', alt: 'Image 1' },
-    { id: 2, src: 'https://wellsr.com/python/assets/images/2022-02-04-test_image.jpg', alt: 'Image 2' },
-    { id: 3, src: 'https://images.unsplash.com/photo-1589828155685-83225f7d91f3?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8Y2FyJTIwcm9hZHxlbnwwfHwwfHx8MA%3D%3D', alt: 'Image 3' },
-    { id: 4, src: 'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Y3Jvd2QlMjBjaGVlcmluZ3xlbnwwfHwwfHx8MA%3D%3D', alt: 'Image 4' },
-    { id: 5, src: 'https://plus.unsplash.com/premium_photo-1681223965635-bdb526bc4989?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', alt: 'Image 5' },
-    { id: 6, src: 'https://plus.unsplash.com/premium_photo-1671658221790-5ef01f87dce3?q=80&w=1886&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', alt: 'Image 6' },
-    { id: 7, src: 'https://cdn.pixabay.com/photo/2023/12/19/21/19/girls-8458409_1280.jpg', alt: 'Image 7' },
-    { id: 8, src: 'https://cdn.pixabay.com/photo/2023/08/27/00/08/cycling-8215968_1280.jpg', alt: 'Image 8' },
-    { id: 9, src: 'https://cdn.pixabay.com/photo/2015/04/19/08/32/marguerite-729510_1280.jpg', alt: 'Image 9' },
-    { id: 10, src: 'https://cdn.pixabay.com/photo/2016/11/29/08/41/apple-1868496_1280.jpg', alt: 'Image 10' },
-    // ... more pictures
+  const [selectedCamera, setSelectedCamera] = useState(null);
+
+  const handleSelectCamera = (camera) => {
+    setSelectedCamera(camera);
+  };
+
+  // Update this list with your actual video data
+  const videos = [
+    { id: 1, src: 'http://localhost:5001/static/videos/YEMEKHANE.mp4', alt: 'Video 1', name: 'YEMEKHANE' },
+    { id: 2, src: 'http://localhost:5001/static/videos/B12 YBF Otopark Nov 23.mp4', alt: 'Video 2', name: 'B12 YBF Otopark' },
+    { id: 3, src: 'http://localhost:5001/static/videos/shortvideo.mp4', alt: 'Video 3', name: 'SERMET' },
   ];
 
-  const gridStyle = {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(5, 1fr)',
-    gap: '10px',
-  };
-
-  const imageStyle = {
-    width: '100%',
-    height: '200px',
-    objectFit: 'cover',
-  };
-
-  const itemStyle = {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    marginBottom: '20px', // Adjust as needed to space out grid items
-  };
-  
-  const selectButtonStyle = (pictureId) => ({
-    marginTop: '10px',
-    padding: '5px 10px',
-    cursor: 'pointer',
-    backgroundColor: selectedPictureId === pictureId ? '#28a745' : '#007bff', // Green if selected, otherwise blue
-    color: 'white',
-    border: 'none',
-    borderRadius: '5px',
-  });
-  
-  const seeResultsButtonStyle = {
-    marginTop: '20px',
-    padding: '10px 15px',
-    cursor: 'pointer',
-    backgroundColor: '#ff5722', // Example fancy color
-    color: 'white',
-    border: 'none',
-    borderRadius: '5px',
-    fontSize: '18px', // Larger font size
-    boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)', // Add shadow for a fancier look
-  };
-  
-  const buttonContainerStyle = {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: '20px', // Adjust as needed for spacing
+  const preventPlay = (e) => {
+    e.preventDefault();
+    if (e.target.playing) {
+      e.target.pause();
+    }
   };
   
   return (
-    <div>
-      <h1>Select a Sensor</h1>
-      <div className="picture-list" style={gridStyle}>
-        {pictures.map(picture => (
-            <div key={picture.id} style={itemStyle}>
-            <img 
-                src={picture.src} 
-                alt={picture.alt} 
-                style={imageStyle}
-            />
-            <button 
-                style={selectButtonStyle(picture.id)}
-                onClick={() => picSelect(picture)}
-            >
-                Select Sensor
-            </button>
-            </div>
+    <div className='container'>
+      <header className='header'>
+        <h1>Sensing as a Service</h1>
+      </header>
+      <div className="cameras">
+        {videos.map((video) => (
+          <div
+            key={video.id}
+            className={`camera ${selectedCamera === video.id ? 'selected' : ''}`}
+            onClick={() => handleSelectCamera(video.id)}
+          >
+            <video src={video.src} className="video" onClick={preventPlay} />
+            <div className="cameraName">{video.name}</div>
+          </div>
         ))}
-        </div>
-        {selectedPicture && (
-              <div style={buttonContainerStyle}>
-                  <button style={seeResultsButtonStyle} onClick={handleNavigateToML}>Go to Machine Learning Algorithm Selection</button>
-              </div>
-        )}
-
+      </div>
+      <div className="navigation">
+        <button className="button buttonExit" onClick={() => console.log('Exit')}>EXIT</button>
+        <button className="button" onClick={() => handleNavigateToML}>NEXT →</button>
+      </div>
     </div>
   );
+
 }
 
 export default SensorsPage;
