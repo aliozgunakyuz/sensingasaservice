@@ -32,8 +32,13 @@ function SensorsPage({ onVideoSelect }) {
   };
 
   const handleNavigateToML = () => {
-    navigate('/ml-algorithms');
+    if (selectedVideo) {
+      navigate('/ml-algorithms', { state: { selectedVideo } });
+    } else {
+      alert("Please select a video first.");
+    }
   };
+  
 
   const handleSelectCamera = (video) => {
     videoSelect(video); // Pass the entire video object to videoSelect

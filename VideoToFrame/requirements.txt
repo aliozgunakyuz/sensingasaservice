@@ -1,3 +1,5 @@
 numpy
 opencv-python-headless
 requests
+flask
+flask_cors

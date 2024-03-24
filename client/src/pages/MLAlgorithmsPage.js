@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './MLAlgorithmsPage.css';
+import { useLocation } from 'react-router-dom';
 
-function MLAlgorithmsPage({ selectedVideo }) {
+function MLAlgorithmsPage() {
+    const location = useLocation();
+    const selectedVideo = location.state?.selectedVideo;
     const [results, setResults] = useState(null);
     const [detections, setDetections] = useState([]);
     const [videoURL, setVideoURL] = useState(''); // Assuming you'll provide a way to access the processed video
@@ -26,39 +29,48 @@ function MLAlgorithmsPage({ selectedVideo }) {
     };
 
     const handleUpload = () => {
-      if (selectedVideo && selectedAlgorithm === 'YOLO') {
-          const formData = new FormData();
-          formData.append('file', selectedVideo); // Assuming selectedVideo is a File object
-  
-          fetch('http://localhost:5001/upload_video', { // Make sure this matches your Flask route
-              method: 'POST',
-              body: formData,
-          })
-          .then(response => response.json())
-          .then(data => {
-              console.log("YOLO Results:", data);
-              setDetections(data);
-              // setVideoURL(data.processedVideoURL); // Assuming the backend sends back a URL to the processed video
-          })
-          .catch(error => console.error('Error:', error));
+      if (selectedVideo.src && selectedAlgorithm) {
+          fetch(selectedVideo.src)
+              .then(response => response.blob())
+              .then(blob => {
+                  const formData = new FormData();
+                  // Create a file from the blob
+                  const file = new File([blob], selectedVideo.name, { type: "video/mp4" });
+                  formData.append('file', file);
+                  console.log("Formdata Results:", formData);
+                  // Now, send the formData to your video_processor
+                  return fetch('http://localhost:5002/process_video', {
+                      method: 'POST',
+                      body: formData,
+                  });
+              })
+              .then(response => response.json())
+              .then(data => {
+                  console.log("Processing Results:", data);
+                  setDetections(data);
+              })
+              .catch(error => console.error('Error:', error));
       } else {
-          console.error('No video selected or algorithm not supported');
+          console.error('No video selected or algorithm not selected');
       }
-   };
+  };
+  
+  
+  
   
    const handleSelectAlgorithm = (id) => {
     setSelectedAlgorithm(id);
   };
 
   const handleNext = () => {
-    if (selectedAlgorithm) {
-      // Add logic for when the 'NEXT' button is pressed after an algorithm is selected
-      console.log('Selected Algorithm:', selectedAlgorithm);
-      // navigate to the results page or processing page
+    if (selectedAlgorithm && selectedVideo) {
+        console.log('Selected Algorithm:', selectedAlgorithm);
+        handleUpload(); // Trigger video processing and fetching results
     } else {
-      console.error('No algorithm selected');
+        console.error('No algorithm selected or no video selected');
     }
-  };
+};
+
 
   const handleBack = () => {
     // navigate back to the video selection page
@@ -81,6 +93,7 @@ function MLAlgorithmsPage({ selectedVideo }) {
         </header>
         <main className="algorithm-selection">
           <h2>Select Your Algorithm</h2>
+          <div> {selectedVideo.src} </div>
           <div className="algorithms">
             {algorithms.map((algo) => (
               <div

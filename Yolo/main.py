@@ -19,12 +19,19 @@ def detect_objects_in_frame():
         return jsonify({"error": "Invalid request"}), 400
 
     # Convert base64 image to numpy array
-    encoded_data = data['image']
-    nparr = np.fromstring(base64.b64decode(encoded_data), np.uint8)
+    if encoded_data.startswith('data:image/jpeg;base64,'):
+        encoded_data = encoded_data.replace('data:image/jpeg;base64,', '')
+
+    # Convert base64 image to numpy array
+    encoded_data = base64.b64decode(encoded_data)
+    nparr = np.frombuffer(encoded_data, np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+
 
     # Use YOLO model to detect objects
     results = model(img)
+
+    print("YOLO detection results:", results)
 
     # Extract detection results
     detections = format_detections(results)
@@ -33,14 +40,16 @@ def detect_objects_in_frame():
 
 def format_detections(results):
     detections = []
-    for *xyxy, conf, cls in results.xyxy[0]:  # results.xyxy is a list of tensors
+    for det in results.xyxy[0]:  # Assuming results.xyxy[0] is the correct tensor containing detections
+        x1, y1, x2, y2, conf, cls = det
         detection = {
             "class_name": results.names[int(cls)],
             "confidence": round(float(conf), 2),
-            "bbox": [int(xyxy[0]), int(xyxy[1]), int(xyxy[2]), int(xyxy[3])]
+            "bbox": [int(x1), int(y1), int(x2), int(y2)]
         }
         detections.append(detection)
     return detections
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001, debug=True)
