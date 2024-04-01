@@ -4,51 +4,61 @@ import numpy as np
 import cv2
 from ultralytics import YOLO
 import base64
+import math
 
 app = Flask(__name__)
 CORS(app)
+
+classNames = ["person", "bicycle", "car", "motorbike", "aeroplane", "bus", "train", "truck", "boat",
+              "traffic light", "fire hydrant", "stop sign", "parking meter", "bench", "bird", "cat",
+              "dog", "horse", "sheep", "cow", "elephant", "bear", "zebra", "giraffe", "backpack", "umbrella",
+              "handbag", "tie", "suitcase", "frisbee", "skis", "snowboard", "sports ball", "kite", "baseball bat",
+              "baseball glove", "skateboard", "surfboard", "tennis racket", "bottle", "wine glass", "cup",
+              "fork", "knife", "spoon", "bowl", "banana", "apple", "sandwich", "orange", "broccoli",
+              "carrot", "hot dog", "pizza", "donut", "cake", "chair", "sofa", "pottedplant", "bed",
+              "diningtable", "toilet", "tvmonitor", "laptop", "mouse", "remote", "keyboard", "cell phone",
+              "microwave", "oven", "toaster", "sink", "refrigerator", "book", "clock", "vase", "scissors",
+              "teddy bear", "hair drier", "toothbrush"
+              ]
 
 # Load your YOLO model
 model = YOLO("yolo-Weights/yolov8n.pt")
 
 @app.route('/detect_objects_in_frame', methods=['POST'])
 def detect_objects_in_frame():
-    # Decode the image from base64
     data = request.json
     if not data or 'image' not in data:
         return jsonify({"error": "Invalid request"}), 400
 
-    # Convert base64 image to numpy array
+    # Decode the image from base64 and prepare it
+    encoded_data = data['image']
     if encoded_data.startswith('data:image/jpeg;base64,'):
         encoded_data = encoded_data.replace('data:image/jpeg;base64,', '')
+    decoded_data = base64.b64decode(encoded_data)
+    nparr = np.frombuffer(decoded_data, np.uint8)
 
-    # Convert base64 image to numpy array
-    encoded_data = base64.b64decode(encoded_data)
-    nparr = np.frombuffer(encoded_data, np.uint8)
-    img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-
-
-    # Use YOLO model to detect objects
+    img = cv2.imdecode(nparr, cv2.IMREAD_UNCHANGED)
+    
     results = model(img)
+    
+    # Process results
+    detections = []
+    for r in results:
+        boxes = r.boxes
 
-    print("YOLO detection results:", results)
+        for box in boxes:
+            class_id = int(box.cls[0])
+            confidence = float(box.conf[0])
+            x1, y1, x2, y2 = [int(coord) for coord in box.xyxy[0]]
 
-    # Extract detection results
-    detections = format_detections(results)
+            detection = {
+                "class_name": classNames[class_id],
+                "confidence": round(confidence, 2),
+                "bbox": [x1, y1, x2, y2]
+            }
+            detections.append(detection)
 
     return jsonify(detections)
-
-def format_detections(results):
-    detections = []
-    for det in results.xyxy[0]:  # Assuming results.xyxy[0] is the correct tensor containing detections
-        x1, y1, x2, y2, conf, cls = det
-        detection = {
-            "class_name": results.names[int(cls)],
-            "confidence": round(float(conf), 2),
-            "bbox": [int(x1), int(y1), int(x2), int(y2)]
-        }
-        detections.append(detection)
-    return detections
 
 
 if __name__ == '__main__':
