@@ -66,10 +66,14 @@ function MLAlgorithmsPage() {
     if (selectedAlgorithm && selectedVideo) {
         console.log('Selected Algorithm:', selectedAlgorithm);
         handleUpload(); // Trigger video processing and fetching results
+
+        navigate('/uploadapi', { state: { selectedVideo, selectedAlgorithm } });
     } else {
-        console.error('No algorithm selected or no video selected');
+       alert("Please select an algorithm first.");
     }
 };
+
+
 
 
   const handleBack = () => {
@@ -88,11 +92,10 @@ function MLAlgorithmsPage() {
 
     return (
       <div className='ml-page-container'>
-        <header className='header'>
-          <h1>Sensing as a Service</h1>
-        </header>
         <main className="algorithm-selection">
-          <h2>Select Your Algorithm</h2>
+          <header className='header'>
+            <h1>Select Your Algorithm</h1>
+          </header>
           <div> {selectedVideo.src} </div>
           <div className="algorithms">
             {algorithms.map((algo) => (
@@ -105,11 +108,12 @@ function MLAlgorithmsPage() {
               </div>
             ))}
           </div>
+          <div className="navigation">
+            <button className="button" onClick={handleBack}>← BACK</button>
+            <button className="button" onClick={handleNext}>NEXT →</button>
+          </div>
         </main>
-        <div className="navigation">
-          <button className="button" onClick={handleBack}>← BACK</button>
-          <button className="button" onClick={handleNext}>NEXT →</button>
-        </div>
+        
       </div>
     );
 }

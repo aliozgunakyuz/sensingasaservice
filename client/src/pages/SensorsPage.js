@@ -47,7 +47,7 @@ function SensorsPage({ onVideoSelect }) {
   return (
     <div className='container'>
       <header className='header'>
-        <h1>Sensing as a Service</h1>
+        <h1>Select a Camera</h1>
       </header>
       <div className="cameras">
         {videos.map((video) => (
@@ -67,6 +67,7 @@ function SensorsPage({ onVideoSelect }) {
       </div>
     </div>
   );
+  
 }
 
 export default SensorsPage;

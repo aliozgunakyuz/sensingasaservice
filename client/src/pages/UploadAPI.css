@@ -1,0 +1,125 @@
+.uploadapipage {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+  
+  .header {
+    text-align: center;
+    background-color: #ffffff; 
+    padding: 1em 0;
+    color: #007bff;
+  }
+
+  .input-container {
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .input-container input {
+    width: 100%;
+    max-width: 600px; 
+    margin: 10px 0;
+    padding: 10px;
+    font-size: 16px;
+    line-height: 1.5;
+    border: 2px solid #007bff;
+  }
+  
+  .submitted-values-container {
+    position: relative; 
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px; 
+    padding: 10px;
+    overflow-x: auto; 
+  }
+
+
+  .submitted-value {
+    background-color: #ffffff; 
+    display: flex;
+    flex-direction: row;
+    border-radius: 20px;
+    border: 2px solid #007bff;
+    padding: 5px 10px; 
+    margin-right: 10px; 
+    white-space: nowrap;
+    cursor: pointer; 
+    transition: background-color 0.3s; 
+    position: relative; 
+  }
+  
+  .submitted-value::after {
+    content: 'X'; 
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); 
+    font-size: 1em; 
+    font-weight: bold;
+    color: white;
+    background-color: #dc3545;
+    border-radius: 100%;
+    width: 1em; 
+    height: 1em; 
+    display: none;
+    line-height: 1em; 
+    text-align: center; 
+    width: var(--x-size); 
+    height: var(--x-size);
+  } 
+  
+  .submitted-value:hover {
+    background-color: #dc3545; 
+    border: 2px solid #dc3545;
+  }
+  
+  .submitted-value:hover::after {
+    display: block; 
+  }
+  
+  .content {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center; 
+    padding: 20px;
+  }
+  
+  .code-input {
+    width: 100%;
+    height: auto;
+    line-height: 1.5;
+    font-family: monospace;
+    padding: 10px;
+    border: 2px solid #007bff;
+    
+  }
+  
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+  }
+  
+  .navigation {
+    display: flex;
+    justify-content: space-between;
+    padding: 1em;
+    background-color: #ffffff;
+  }
+  
+  .button {
+    padding: 0.625em 1.25em;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .button:hover {
+    background-color: #007bff;
+    color: white;
+  }
+  

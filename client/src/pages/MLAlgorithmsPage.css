@@ -6,15 +6,26 @@
   height: 100vh;
 }
 
+.algorithm-selection {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* This will distribute space between header, content and navigation */
+  height: calc(100vh - 100px); /* Adjust the 60px to account for any fixed headers or footers outside the main content */
+}
+
+
 .header {
   text-align: center;
-  background-color: #f0f0f0;
+  background-color: #ffffff; 
   padding: 1em 0;
+  color: #007bff;
 }
 
 .algorithm-selection h2 {
-  text-align: center;
-  margin: 1em 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* This will distribute space between header, content and navigation */
+  height: calc(100vh - 60px);
 }
 
 .algorithms {
@@ -43,7 +54,7 @@
   display: flex;
   justify-content: space-between;
   padding: 1em;
-  background-color: #f0f0f0;
+  background-color: #ffffff;
 }
 
 .button {

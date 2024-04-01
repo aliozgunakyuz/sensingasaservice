@@ -1,15 +1,17 @@
 /* SensorsPage.css */
 .container {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 100vh;
-  }
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* This will space out the children */
+  height: 100vh; /* Use 100% of the viewport height */
+}
+
   
   .header {
     text-align: center;
-    background-color: #f0f0f0;
+    background-color: #ffffff; 
     padding: 1em 0;
+    color: #007bff;
   }
   
   .cameras {
@@ -44,7 +46,7 @@
     display: flex;
     justify-content: space-between;
     padding: 1em;
-    background-color: #f0f0f0;
+    background-color: #ffffff;
   }
   
   .button {
