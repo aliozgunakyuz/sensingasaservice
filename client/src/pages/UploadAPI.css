@@ -81,11 +81,31 @@
     display: block; 
   }
   
+
   .content {
+    position: relative;
     flex-grow: 1;
     display: flex;
-    justify-content: center; 
     padding: 20px;
+  }
+
+  .line-numbers {
+    position: absolute;
+    left: 0;
+    top: 0;
+    padding: 10px;
+    text-align: right;
+    color: #333;
+    background-color: #f0f0f0;
+    border-right: 2px solid #007bff;
+  }
+
+  .line-numbers pre {
+    margin: 0;
+    padding-right: 10px; /* To align with the textarea padding */
+    line-height: 1.5; /* Same as textarea line height */
+    font-family: monospace;
+    user-select: none; /* Prevents line numbers from being selected */
   }
   
   .code-input {
@@ -95,6 +115,7 @@
     font-family: monospace;
     padding: 10px;
     border: 2px solid #007bff;
+    background-color: #ffffff; 
     
   }
   

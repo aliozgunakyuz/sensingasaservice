@@ -6,11 +6,21 @@ import { useNavigate } from 'react-router-dom';
 function UploadAPI() {
   const [inputValue, setInputValue] = useState('');
   const [submittedValues, setSubmittedValues] = useState([]);
+  const [codeInputValue, setCodeInputValue] = useState('');
   const navigate = useNavigate();
 
 
   const handleInputChange = (event) => {
     setInputValue(event.target.value);
+  };
+
+  const handleCodeInputChange = (event) => {
+    setCodeInputValue(event.target.value);
+  };
+
+  const lineNumberString = () => {
+    const numberOfLines = codeInputValue.split('\n').length;
+    return Array.from({ length: numberOfLines }, (_, index) => index + 1).join('\n');
   };
 
   const handleInputKeyPress = (event) => {
@@ -30,6 +40,12 @@ function UploadAPI() {
   const handleBack = () => {
     navigate(-1);
   };
+
+  const countLines = (text) => {
+    return text.split('\n').length;
+  };
+
+
 
   return (
     <div className="sensing-service-page">
@@ -53,8 +69,17 @@ function UploadAPI() {
         ))}
       </div>
       <div className="content">
-        <textarea className="code-input" rows="25" placeholder="Paste your API code here..."></textarea>
+      <div className="line-numbers">
+        <pre>{lineNumberString()}</pre>
       </div>
+      <textarea
+        className="code-input"
+        value={codeInputValue}
+        onChange={handleCodeInputChange}
+        rows="25"
+        placeholder="Paste your API code here..."
+      ></textarea>
+    </div>
       <div className="footer">
         <button className="button" onClick={handleBack}>← BACK</button>
         <button className="button">NEXT →</button>
