@@ -1,0 +1,109 @@
+/* mainApp.css */
+
+.App {
+    padding-top: 50px;
+  }
+  
+  .App-logo {
+    height: 40vmin;
+    pointer-events: none;
+  }
+  
+  @media (prefers-reduced-motion: no-preference) {
+    .App-logo {
+      animation: App-logo-spin infinite 20s linear;
+    }
+  }
+  
+  .App-header {
+    background-color: #282c34;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
+  }
+  
+  .App-link {
+    color: #61dafb;
+  }
+  
+  @keyframes App-logo-spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  .image-preview {
+    max-width: 200px; /* Maksimum genişlik */
+    max-height: 200px; /* Maksimum yükseklik */
+    border: 1px solid #ddd; /* Çerçeve */
+    border-radius: 4px; /* Kenarları yuvarlak yapmak için */
+    padding: 5px; /* Çerçeve ile resim arasında boşluk */
+    margin-top: 10px; /* Üstten boşluk */
+  }
+  
+  .navigation-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f8f8f8;
+    border-bottom: 1px solid #e7e7e7;
+    padding: 0.5rem 1rem;
+    height: 50px; /* Example fixed height for the navigation bar */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000; /* Ensure the navigation bar is above other content */
+  }
+  
+  .nav-title {
+    font-weight: bold;
+    font-size: 1.5rem;
+  }
+  
+  .nav-links {
+    display: flex;
+  }
+  
+  .nav-link {
+    margin-left: 20px; /* Adjust spacing between links as needed */
+    padding: 0.5rem 1rem;
+    color: #555;
+    text-decoration: none;
+  }
+  
+  .nav-link.active {
+    color: #333;
+    text-decoration: underline;
+  }
+  
+  .nav-link:hover {
+    text-decoration: underline;
+  }
+  
+  button.nav-link {
+    border: none;
+    background: none;
+    cursor: pointer;
+  }
+  
+  .main-content {
+    margin-left: 300px; /* Same as sidebar width */
+    padding: 20px;
+    /* other styling for main content */
+  }
+  
+  /* Additional styles for hover effects, active link, etc. */
+  
+  .progress-bar-container {
+    padding-top: 50px; /* Padding between NavigationBar and ProgressBar */
+    padding-bottom: 20px; /* Padding between ProgressBar and Sidebar */
+  }
+  

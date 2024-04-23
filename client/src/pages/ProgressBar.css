@@ -1,0 +1,51 @@
+.progress-circles-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .progress-circle-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .title {
+    margin-bottom: 5px; /* Adjust as needed */
+    font-weight: bold;
+  }
+  
+  .circle {
+    width: 50px; /* Adjust size as needed */
+    height: 50px; /* Adjust size as needed */
+    border-radius: 50%;
+    border: 2px solid green;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white; /* Fallback color */
+  }
+  
+  .circle.filled {
+    background-color: green; /* Circle fill color */
+  }
+  
+  .arrow {
+    width: 50px; /* Adjust length as needed */
+    height: 2px;
+    background-color: green;
+    margin: 0 20px; /* Adjust distance between circles */
+  }
+  
+  /* If you want to add arrows with an arrowhead, you can use pseudo-elements */
+  .arrow::after {
+    content: '';
+    width: 0;
+    height: 0;
+    border-top: 5px solid transparent; /* Adjust arrow size */
+    border-bottom: 5px solid transparent; /* Adjust arrow size */
+    border-left: 10px solid green; /* Adjust arrow size */
+    position: relative;
+    left: -10px;
+  }
+  
