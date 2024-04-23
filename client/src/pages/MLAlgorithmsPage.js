@@ -29,49 +29,58 @@ function MLAlgorithmsPage() {
     };
 
     const handleUpload = () => {
-      if (selectedVideo.src && selectedAlgorithm) {
-          fetch(selectedVideo.src)
-              .then(response => response.blob())
-              .then(blob => {
-                  const formData = new FormData();
-                  // Create a file from the blob
-                  const file = new File([blob], selectedVideo.name, { type: "video/mp4" });
-                  formData.append('file', file);
-                  console.log("Formdata Results:", formData);
-                  // Now, send the formData to your video_processor
-                  return fetch('http://localhost:5002/process_video', {
-                      method: 'POST',
-                      body: formData,
-                  });
-              })
-              .then(response => response.json())
-              .then(data => {
-                  console.log("Processing Results:", data);
-                  setDetections(data);
-              })
-              .catch(error => console.error('Error:', error));
+      return new Promise((resolve, reject) => {
+        if (selectedVideo.src && selectedAlgorithm) {
+            fetch(selectedVideo.src)
+                .then(response => response.blob())
+                .then(blob => {
+                    const formData = new FormData();
+                    const file = new File([blob], selectedVideo.name, { type: "video/mp4" });
+                    formData.append('file', file);
+                    console.log("Formdata Results:", formData);
+                    return fetch('http://localhost:5002/process_video', {
+                        method: 'POST',
+                        body: formData,
+                    });
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Processing Results:", data);
+                    setDetections(data);
+                    resolve(data); // Resolve the promise with the detection data
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    reject(error); // Reject the promise if there's an error
+                });
+        } else {
+            console.error('No video selected or algorithm not selected');
+            reject('No video selected or algorithm not selected');
+        }
+      });
+    };
+    
+    const handleNext = async () => {
+      if (selectedAlgorithm && selectedVideo) {
+          console.log('Selected Algorithm:', selectedAlgorithm);
+          try {
+              const detectionsData = await handleUpload(); // Wait for the processing results
+              console.log('About to navigate with detections:', detectionsData);
+              navigate('/uploadapi', { state: { detections: detectionsData, selectedVideo } });
+          } catch (error) {
+              alert('Failed to process video.');
+              console.error(error);
+          }
       } else {
-          console.error('No video selected or algorithm not selected');
+          alert("Please select an algorithm first.");
       }
-  };
-  
-  
-  
+    };
+    
   
    const handleSelectAlgorithm = (id) => {
     setSelectedAlgorithm(id);
   };
 
-  const handleNext = () => {
-    if (selectedAlgorithm && selectedVideo) {
-        console.log('Selected Algorithm:', selectedAlgorithm);
-        handleUpload(); // Trigger video processing and fetching results
-
-        navigate('/uploadapi', { state: { selectedVideo, selectedAlgorithm } });
-    } else {
-       alert("Please select an algorithm first.");
-    }
-};
 
 
 

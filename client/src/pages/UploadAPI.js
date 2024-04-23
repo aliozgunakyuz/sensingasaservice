@@ -1,14 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './UploadAPI.css';
-import { useNavigate } from 'react-router-dom';
-
+import { useNavigate, useLocation } from 'react-router-dom';
+import axios from 'axios';
 
 function UploadAPI() {
   const [inputValue, setInputValue] = useState('');
   const [submittedValues, setSubmittedValues] = useState([]);
   const [codeInputValue, setCodeInputValue] = useState('');
+  const [selectedFile, setSelectedFile] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
+  const detections = location.state?.detections;
+  const selectedVideo = location.state?.selectedVideo;
+  const [applet_id, setAppletID] = useState('');
 
+
+  useEffect(() => {
+    if (Array.isArray(detections.results)) {
+      const formattedDetections = detections.results.map(detection => JSON.stringify(detection, null, 2)).join('\n');
+      setCodeInputValue(formattedDetections);
+    } else {
+      console.error('Detections is not an array:', detections);
+    }
+  }, [detections]);
+  
+  
 
   const handleInputChange = (event) => {
     setInputValue(event.target.value);
@@ -32,7 +48,7 @@ function UploadAPI() {
   };
 
   const handleDeleteInput = (indexToDelete) => {
-    setSubmittedValues((previousValues) =>
+    setSubmittedValues(previousValues =>
       previousValues.filter((_, index) => index !== indexToDelete)
     );
   };
@@ -41,9 +57,72 @@ function UploadAPI() {
     navigate(-1);
   };
 
-  const countLines = (text) => {
-    return text.split('\n').length;
+  const handleFileChange = (event) => {
+    setSelectedFile(event.target.files[0]);
   };
+
+  const handleSubmit = async () => {
+    if (!selectedFile) {
+        alert('Please select a file to upload');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('in_file', selectedFile);
+    formData.append('dependencies', submittedValues.join(' '));  // Assuming dependencies are stored in submittedValues
+
+    try {
+      const response = await axios.post('http://localhost:5003/deployapi', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      alert('Upload successful');
+      console.log('Applet ID:', response.data.applet_id);
+      setAppletID(response.data.applet_id);
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      alert('Error uploading file');
+    }
+};
+
+const handleNext = async () => {
+  if (detections && detections.results && Array.isArray(detections.results)) {
+    const responsee = detections.results[detections.results.length - 1].response;
+
+    if (!applet_id) {
+      alert('Applet ID is not set');
+      return;
+    }
+
+    const formattedData = responsee.map((detection, index) => ({
+      name: `Detection ${index}`,
+      value: {
+        bbox: detection.bbox,
+        class_name: detection.class_name,
+        confidence: detection.confidence,
+      },
+    }));
+
+    console.log("formattedData: ", formattedData);
+
+    try {
+      const url = `http://localhost:5003/get_inference/${applet_id}`;
+      const response = await axios.post(url, { data: formattedData }, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      console.log('Execute API response:', response.data);
+    } catch (error) {
+      console.error('Error sending data to execute_api:', error);
+      alert('Failed to send data to execute_api');
+    }
+
+  } else {
+    console.error('Detections results not found or not an array');
+  }  
+};
 
 
 
@@ -69,20 +148,27 @@ function UploadAPI() {
         ))}
       </div>
       <div className="content">
-      <div className="line-numbers">
-        <pre>{lineNumberString()}</pre>
+        <textarea
+          className="code-input"
+          value={codeInputValue}
+          onChange={handleCodeInputChange}
+          rows="25"
+          placeholder="Detection results will appear here..."
+        ></textarea>
       </div>
-      <textarea
-        className="code-input"
-        value={codeInputValue}
-        onChange={handleCodeInputChange}
-        rows="25"
-        placeholder="Paste your API code here..."
-      ></textarea>
-    </div>
+      <div className="upload-button-container">
+        <input
+          type="file"
+          accept=".py"
+          onChange={handleFileChange}
+          className="file-input"
+        />
+      </div>
       <div className="footer">
         <button className="button" onClick={handleBack}>← BACK</button>
-        <button className="button">NEXT →</button>
+        <button className="button" onClick={handleSubmit}>UPLOAD</button>
+        <button className="button" onClick={handleNext}>NEXT →</button>
+
       </div>
     </div>
   );

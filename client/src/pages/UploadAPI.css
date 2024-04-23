@@ -37,6 +37,13 @@
     overflow-x: auto; 
   }
 
+  .upload-button-container {
+    padding: 0.625em 1.25em;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+  }
+
 
   .submitted-value {
     background-color: #ffffff; 
