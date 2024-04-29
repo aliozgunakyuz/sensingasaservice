@@ -2,41 +2,40 @@ import React, { useState, useEffect } from 'react';
 import './UploadAPI.css';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
+import CodeBlock from './CodeBlock';
 
 function UploadAPI() {
   const [inputValue, setInputValue] = useState('');
+  const [language, setLanguage] = useState('Python');
   const [submittedValues, setSubmittedValues] = useState([]);
   const [codeInputValue, setCodeInputValue] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
+  const [applet_id, setAppletID] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
   const detections = location.state?.detections;
   const selectedVideo = location.state?.selectedVideo;
-  const [applet_id, setAppletID] = useState('');
-
 
   useEffect(() => {
-    if (Array.isArray(detections.results)) {
+    if (Array.isArray(detections?.results)) {
       const formattedDetections = detections.results.map(detection => JSON.stringify(detection, null, 2)).join('\n');
-      setCodeInputValue(formattedDetections);
     } else {
       console.error('Detections is not an array:', detections);
     }
   }, [detections]);
-  
-  
 
   const handleInputChange = (event) => {
     setInputValue(event.target.value);
   };
 
-  const handleCodeInputChange = (event) => {
-    setCodeInputValue(event.target.value);
+  const handleCodeInputChange = (value) => {
+    setCodeInputValue(value);
+    setInputValue(value);
   };
+  
 
-  const lineNumberString = () => {
-    const numberOfLines = codeInputValue.split('\n').length;
-    return Array.from({ length: numberOfLines }, (_, index) => index + 1).join('\n');
+  const handleLanguageChange = (event) => {
+    setLanguage(event.target.value);
   };
 
   const handleInputKeyPress = (event) => {
@@ -63,13 +62,13 @@ function UploadAPI() {
 
   const handleSubmit = async () => {
     if (!selectedFile) {
-        alert('Please select a file to upload');
-        return;
+      alert('Please select a file to upload');
+      return;
     }
 
     const formData = new FormData();
     formData.append('in_file', selectedFile);
-    formData.append('dependencies', submittedValues.join(' '));  // Assuming dependencies are stored in submittedValues
+    formData.append('dependencies', submittedValues.join(' '));
 
     try {
       const response = await axios.post('http://localhost:5003/deployapi', formData, {
@@ -84,45 +83,65 @@ function UploadAPI() {
       console.error('Error uploading file:', error);
       alert('Error uploading file');
     }
-};
+  };
 
-const handleNext = async () => {
-  if (detections && detections.results && Array.isArray(detections.results)) {
-    const responsee = detections.results[detections.results.length - 1].response;
+  const handleNext = async () => {
+    if (detections && detections.results && Array.isArray(detections.results)) {
+      const responsee = detections.results[detections.results.length - 1].response;
 
-    if (!applet_id) {
-      alert('Applet ID is not set');
+      if (!applet_id) {
+        alert('Applet ID is not set');
+        return;
+      }
+
+      const formattedData = responsee.map((detection, index) => ({
+        name: `Detection ${index}`,
+        value: {
+          bbox: detection.bbox,
+          class_name: detection.class_name,
+          confidence: detection.confidence,
+        },
+      }));
+
+      console.log("formattedData: ", formattedData);
+
+      try {
+        const url = `http://localhost:5003/get_inference/${applet_id}`;
+        const response = await axios.post(url, { data: formattedData }, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        console.log('Execute API response:', response.data);
+      } catch (error) {
+        console.error('Error sending data to execute_api:', error);
+        alert('Failed to send data to execute_api');
+      }
+    } else {
+      console.error('Detections results not found or not an array');
+    }  
+  };
+
+  const handleCodeWritingComplete = async () => {
+    const trimmedCode = codeInputValue.trim();
+    if (!trimmedCode) {
+      alert('Please write some code before completing.');
       return;
     }
-
-    const formattedData = responsee.map((detection, index) => ({
-      name: `Detection ${index}`,
-      value: {
-        bbox: detection.bbox,
-        class_name: detection.class_name,
-        confidence: detection.confidence,
-      },
-    }));
-
-    console.log("formattedData: ", formattedData);
-
-    try {
-      const url = `http://localhost:5003/get_inference/${applet_id}`;
-      const response = await axios.post(url, { data: formattedData }, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-      console.log('Execute API response:', response.data);
-    } catch (error) {
-      console.error('Error sending data to execute_api:', error);
-      alert('Failed to send data to execute_api');
-    }
-
-  } else {
-    console.error('Detections results not found or not an array');
-  }  
-};
+  
+    // Create a new Blob object with the trimmed code
+    const blob = new Blob([trimmedCode], { type: 'text/plain' });
+  
+    // Create a new File object from the Blob
+    const file = new File([blob], 'script.py', { type: 'text/x-python' });
+  
+    // Set the created file as the selected file
+    setSelectedFile(file);
+  };
+  
+  
+  
+  
 
 
 
@@ -134,8 +153,8 @@ const handleNext = async () => {
       <div className="input-container">
         <input
           type="text"
-          value={inputValue}
-          onChange={handleInputChange}
+          //value={inputValue}
+          //onChange={handleInputChange}
           onKeyPress={handleInputKeyPress}
           placeholder="Enter library names and press enter"
         />
@@ -148,13 +167,7 @@ const handleNext = async () => {
         ))}
       </div>
       <div className="content">
-        <textarea
-          className="code-input"
-          value={codeInputValue}
-          onChange={handleCodeInputChange}
-          rows="25"
-          placeholder="Detection results will appear here..."
-        ></textarea>
+        <CodeBlock onCodeInputChange={handleCodeInputChange} />
       </div>
       <div className="upload-button-container">
         <input
@@ -167,8 +180,8 @@ const handleNext = async () => {
       <div className="footer">
         <button className="button" onClick={handleBack}>← BACK</button>
         <button className="button" onClick={handleSubmit}>UPLOAD</button>
+        <button className="button" onClick={handleCodeWritingComplete}>CODE WRITING COMPLETE</button>
         <button className="button" onClick={handleNext}>NEXT →</button>
-
       </div>
     </div>
   );
