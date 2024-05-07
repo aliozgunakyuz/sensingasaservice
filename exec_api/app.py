@@ -63,7 +63,6 @@ async def execute_api(applet_id: str, inference_request: InferenceRequest):
     codelet = get_codelet(applet_id)
     codelet_input = {detection.name: detection.value.dict() for detection in inference_request.data}
 
-    # Your logic here, assuming execute method accepts **kwargs
     codelet_result = codelet.execute(**codelet_input)
 
     return codelet_result

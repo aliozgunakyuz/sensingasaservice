@@ -1,0 +1,109 @@
+.container {
+    max-width: 400px;
+    margin: auto;
+    justify-content: flex-start;
+    padding: 20px; /* Check if padding is consistent on all sides */
+    padding-bottom: 10px; /* Reduce padding at the bottom if necessary */
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.heading {
+    text-align: center;
+    margin-bottom: 20px; /* Adjust if this is too much */
+    font-size: 24px;
+    color: #333;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group {
+    margin-bottom: 10px; /* Ensure the last form-group doesn't have too much bottom margin */
+}
+
+.label {
+    margin-bottom: 5px;
+    font-size: 16px;
+    color: #555;
+}
+
+.input {
+    padding: 12px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+    transition: border-color 0.3s;
+}
+
+.input:focus {
+    border-color: #0056b3;
+    outline: none;
+}
+
+.button {
+    padding: 12px 20px;
+    background-color: #007bff;
+    color: #fff;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.button:hover, .button:focus {
+    background-color: #0056b3;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.error {
+    color: #dc3545;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.login-prompt {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 16px;
+}
+
+.login-link {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.login-link:hover {
+    text-decoration: underline; 
+}
+
+.register-prompt {
+    text-align: center;
+    margin-top: 10px; 
+    font-size: 16px;
+}
+
+.register-link {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.register-link:hover {
+    text-decoration: underline;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px; 
+}
+
+.label {
+    margin-bottom: 5px; 
+}

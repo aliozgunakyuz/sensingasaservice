@@ -1,19 +1,21 @@
 const express = require('express');
 const multer = require('multer');
+const bcrypt = require('bcrypt');
 const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
 const app = express();
 const port = 8001;
+const mongoose = require('mongoose');
+const UserModel = require('./database/models/userModel.js')
 
+app.use(express.json());
 app.use(cors()); // Enable CORS
 
 const upload = multer({ dest: 'uploads/' });
 
-// Directory where videos are stored
 const VIDEO_DIRECTORY = '/Users/ozgun/Desktop/videos';
 
-// Middleware to serve videos statically from the specified directory
 app.use('/videos', express.static(VIDEO_DIRECTORY));
 
 app.post('/upload', upload.single('file'), (req, res) => {
@@ -34,7 +36,58 @@ app.get('/list_videos', (req, res) => {
   });
 });
 
+mongoose.connect("mongodb+srv://akyuz:NZcNy0uJtIjkZLyx@sensingservice.vglbr2p.mongodb.net/?retryWrites=true&w=majority&appName=SensingService")
+
+
+app.post('/register', async (req, res) => {
+  const { fullname, mail, password } = req.body;
+
+  try {
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const user = await UserModel.create({
+      fullname,
+      email: mail, // Make sure the schema expects 'email' not 'mail'
+      password: hashedPassword
+    });
+
+    res.json({ message: 'User registered successfully!', user });
+  } catch (err) {
+    console.error(err);
+    if (err.code === 11000) { // Handle duplicate key error
+      return res.status(409).json({ error: 'Email already exists' });
+    }
+    res.status(500).json({ error: 'Failed to register user' });
+  }
+});
+
+
+app.post('/login', async (req, res) => {
+  const { mail, password } = req.body;
+
+  try {
+    const user = await UserModel.findOne({ email: mail });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found!' });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Invalid credentials!' });
+    }
+
+    res.json({ message: 'Login successful!', user }); // Consider using authentication tokens here
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+
+
 
 app.listen(port, () => {
   console.log(`Sunucu ${port} numaralı portta çalışıyor.`);
 });
+

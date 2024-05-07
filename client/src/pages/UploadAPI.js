@@ -6,15 +6,14 @@ import CodeBlock from './CodeBlock';
 
 function UploadAPI() {
   const [inputValue, setInputValue] = useState('');
-  const [language, setLanguage] = useState('Python');
   const [submittedValues, setSubmittedValues] = useState([]);
   const [codeInputValue, setCodeInputValue] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
   const [applet_id, setAppletID] = useState('');
+  const [userChoice, setUserChoice] = useState(null); // Default choice is null
   const navigate = useNavigate();
   const location = useLocation();
   const detections = location.state?.detections;
-  const selectedVideo = location.state?.selectedVideo;
 
   useEffect(() => {
     if (Array.isArray(detections?.results)) {
@@ -31,11 +30,6 @@ function UploadAPI() {
   const handleCodeInputChange = (value) => {
     setCodeInputValue(value);
     setInputValue(value);
-  };
-  
-
-  const handleLanguageChange = (event) => {
-    setLanguage(event.target.value);
   };
 
   const handleInputKeyPress = (event) => {
@@ -59,6 +53,8 @@ function UploadAPI() {
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
   };
+
+
 
   const handleSubmit = async () => {
     if (!selectedFile) {
@@ -104,6 +100,8 @@ function UploadAPI() {
       }));
 
       console.log("formattedData: ", formattedData);
+      
+  
 
       try {
         const url = `http://localhost:5003/get_inference/${applet_id}`;
@@ -129,60 +127,96 @@ function UploadAPI() {
       return;
     }
   
-    // Create a new Blob object with the trimmed code
     const blob = new Blob([trimmedCode], { type: 'text/plain' });
   
-    // Create a new File object from the Blob
     const file = new File([blob], 'script.py', { type: 'text/x-python' });
   
-    // Set the created file as the selected file
+    handleFileSelection(file);
+    handleSubmit();
+  };
+  
+  const handleFileSelection = (file) => {
     setSelectedFile(file);
   };
   
   
-  
-  
-
-
+  const handleUserChoice = (choice) => {
+    setUserChoice(userChoice === choice ? null : choice);
+    setCodeInputValue(''); // Reset code input value if user chooses to write code
+    setSelectedFile(null); // Reset selected file if user chooses to upload file
+  };
 
   return (
     <div className="sensing-service-page">
       <header className='header'>
         <h1>Upload API</h1>
       </header>
-      <div className="input-container">
-        <input
-          type="text"
-          //value={inputValue}
-          //onChange={handleInputChange}
-          onKeyPress={handleInputKeyPress}
-          placeholder="Enter library names and press enter"
-        />
+      <div className="choice-container">
+        <button className={`button ${userChoice === 'writeCode' ? 'active' : ''}`} onClick={() => handleUserChoice('writeCode')}>
+          Write Code
+        </button>
+        <button className={`button ${userChoice === 'uploadFile' ? 'active' : ''} upload-file-button`} onClick={() => handleUserChoice('uploadFile')}>
+          Upload File
+        </button>
       </div>
-      <div className="submitted-values-container">
-        {submittedValues.map((value, index) => (
-          <div key={index} className="submitted-value" onClick={() => handleDeleteInput(index)}>
-            {value}
+
+      {userChoice === 'writeCode' && (
+        <>
+        <div className="input-container">
+            <input
+              type="text"
+              //value={inputValue}
+              //onChange={handleInputChange}
+              onKeyPress={handleInputKeyPress}
+              placeholder="Enter library names and press enter"
+            />
           </div>
-        ))}
-      </div>
-      <div className="content">
-        <CodeBlock onCodeInputChange={handleCodeInputChange} />
-      </div>
-      <div className="upload-button-container">
-        <input
-          type="file"
-          accept=".py"
-          onChange={handleFileChange}
-          className="file-input"
-        />
-      </div>
-      <div className="footer">
+          <div className="submitted-values-container">
+            {submittedValues.map((value, index) => (
+              <div key={index} className="submitted-value" onClick={() => handleDeleteInput(index)}>
+                {value}
+              </div>
+            ))}
+          </div>
+          <div className="content">
+            <CodeBlock onCodeInputChange={handleCodeInputChange} />
+          </div>
+        </>
+      )}
+      {userChoice === 'uploadFile' && (
+        <div className="upload-button-container">
+          <label htmlFor="file-input" className="file-input-label">
+            Choose File
+          </label>
+          <input
+            id="file-input"
+            type="file"
+            accept=".py"
+            onChange={handleFileChange}
+            className="file-input"
+          />
+          {selectedFile && (
+            <div className="file-info-container">
+              <span>{selectedFile.name}</span>
+              <button className="delete-file-button" onClick={() => setSelectedFile(null)}>
+                Delete File
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+
+
+      {userChoice && (
+        <div className="footer">
         <button className="button" onClick={handleBack}>← BACK</button>
-        <button className="button" onClick={handleSubmit}>UPLOAD</button>
-        <button className="button" onClick={handleCodeWritingComplete}>CODE WRITING COMPLETE</button>
+        {userChoice === 'uploadFile' && <button className="button" onClick={handleSubmit}>UPLOAD FILE</button>}
+        {userChoice === 'writeCode' && <button className="button" onClick={handleCodeWritingComplete}>UPLOAD CODE</button>}
         <button className="button" onClick={handleNext}>NEXT →</button>
       </div>
+      
+      )}
     </div>
   );
 }

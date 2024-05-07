@@ -8,6 +8,8 @@ import SensorsPage from './pages/SensorsPage';
 import MLAlgorithmsPage from './pages/MLAlgorithmsPage';
 import UploadAPI from './pages/UploadAPI';
 import './mainApp.css';
+import Register from './pages/RegisterPage'
+import Login from './pages/LoginPage'
 
 const MainApp = ({ setSelectedVideo }) => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -30,21 +32,30 @@ const MainApp = ({ setSelectedVideo }) => {
     }
   }, [location]);
 
+
   return (
-    <div>
-      <NavigationBar />
-      <Sidebar />
-      <ProgressBar currentStep={currentStep} totalSteps={3} />
-      <main className="main-content">
-        <Routes>
-          <Route path="/" element={<DashboardPage />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/sensors" element={<SensorsPage onVideoSelect={setSelectedVideo} />} />
-          <Route path="/ml-algorithms" element={<MLAlgorithmsPage />} />
-          <Route path="/uploadapi" element={<UploadAPI />} />
-        </Routes>
-      </main>
-    </div>
+
+      <div>
+        <NavigationBar />
+        <Sidebar />
+        <ProgressBar currentStep={currentStep} totalSteps={3} />
+        <main className="main-content">
+            <Routes>
+              <Route path="/" element={<DashboardPage />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/sensors" element={
+              
+                  <SensorsPage onVideoSelect={setSelectedVideo} />
+                
+              } />
+              <Route path="/ml-algorithms" element={<MLAlgorithmsPage />} />
+              <Route path="/uploadapi" element={<UploadAPI />} />
+            </Routes>
+        </main>
+      </div>
+
   );
 };
 
