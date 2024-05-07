@@ -1,19 +1,14 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-
+import './NavigationBar.css';
 
 function NavigationBar() {
-
   return (
     <div className="navigation-bar">
       <div className="nav-title">Sensing as a Service</div>
       <div className="nav-links">
-
-            <NavLink to="/register" >Register</NavLink>
-            <NavLink to="/login" >Login</NavLink>
-
-        <NavLink to="/about" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>About</NavLink>
-        <NavLink to="/tutorial" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>Tutorial</NavLink>
+        <NavLink to="/login" className="nav-link" activeClassName="active">Login</NavLink>
+        <NavLink to="/register" className="nav-link" activeClassName="active">Register</NavLink>
       </div>
     </div>
   );

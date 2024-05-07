@@ -54,9 +54,10 @@ function Register() {
     };
 
     return (
-        <div className="container">
+        <div className="register-container">
             <h2 className="heading">Register</h2>
-            <p className="login-prompt">Already have an account? <a href="/login" className="login-link">Login</a></p>
+            <p className="register-prompt">Already have an account? <a href="/login" className="login-link">Login</a></p>
+            {error && <p className="register-error">{error}</p>}
             <form onSubmit={handleSubmit} className="form">
                 <div className="form-group">
                     <label htmlFor="fullname" className="label"><strong>Name</strong></label>

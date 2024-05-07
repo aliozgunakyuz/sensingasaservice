@@ -1,37 +1,39 @@
-.container {
+.register-container {
     max-width: 400px;
+    justify-content: center;
     margin: auto;
-    justify-content: flex-start;
-    padding: 20px; /* Check if padding is consistent on all sides */
-    padding-bottom: 10px; /* Reduce padding at the bottom if necessary */
+    padding: 20px;
+    padding-bottom: 10px;
     background-color: #f8f9fa;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-.heading {
+.register-container .heading {
     text-align: center;
-    margin-bottom: 20px; /* Adjust if this is too much */
+    margin-bottom: 20px;
     font-size: 24px;
-    color: #333;
+    color: #007bff;
 }
 
-.form {
+.register-container .form {
     display: flex;
     flex-direction: column;
 }
 
-.form-group {
-    margin-bottom: 10px; /* Ensure the last form-group doesn't have too much bottom margin */
+.register-container .form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
 }
 
-.label {
+.register-container .label {
     margin-bottom: 5px;
     font-size: 16px;
     color: #555;
 }
 
-.input {
+.register-container .input {
     padding: 12px;
     border-radius: 5px;
     border: 1px solid #ccc;
@@ -39,12 +41,12 @@
     transition: border-color 0.3s;
 }
 
-.input:focus {
+.register-container .input:focus {
     border-color: #0056b3;
     outline: none;
 }
 
-.button {
+.register-container .button {
     padding: 12px 20px;
     background-color: #007bff;
     color: #fff;
@@ -55,55 +57,47 @@
     transition: background-color 0.3s, box-shadow 0.3s;
 }
 
-.button:hover, .button:focus {
+.register-container .button:hover, .register-container .button:focus {
     background-color: #0056b3;
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
-.error {
+.register-container .error {
     color: #dc3545;
     margin-bottom: 10px;
     font-size: 14px;
 }
 
-.login-prompt {
+.register-container .register-prompt {
     text-align: center;
     margin-top: 10px;
     font-size: 16px;
 }
 
-.login-link {
+.register-container .register-link {
     color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.register-container .register-link:hover {
+    text-decoration: underline;
+}
+
+.login-link, .login-link:visited {
+    color: #007bff;  /* Your desired link color */
     text-decoration: none;
     font-weight: bold;
 }
 
 .login-link:hover {
-    text-decoration: underline; 
+    text-decoration: underline;  /* Maintain hover effect if needed */
 }
 
-.register-prompt {
-    text-align: center;
-    margin-top: 10px; 
-    font-size: 16px;
-}
 
-.register-link {
-    color: #007bff;
-    text-decoration: none;
-    font-weight: bold;
-}
-
-.register-link:hover {
-    text-decoration: underline;
-}
-
-.form-group {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 15px; 
-}
-
-.label {
-    margin-bottom: 5px; 
+.register-error {
+    color: #dc3545; /* Red color for visibility */
+    margin-bottom: 10px;
+    text-align: center; /* Center align the text */
+    width: 100%; /* Ensure it spans the full width of the form */
 }
