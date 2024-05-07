@@ -10,7 +10,12 @@ const mongoose = require('mongoose');
 const UserModel = require('./database/models/userModel.js')
 
 app.use(express.json());
-app.use(cors()); // Enable CORS
+
+app.use(cors({
+    origin: 'http://localhost:3000', // or whichever port your React app is running on
+    credentials: true
+}));
+
 
 const upload = multer({ dest: 'uploads/' });
 
@@ -63,13 +68,15 @@ app.post('/register', async (req, res) => {
 });
 
 
+const jwt = require('jsonwebtoken');
+
 app.post('/login', async (req, res) => {
   const { mail, password } = req.body;
-
+  console.log(mail, password);
   try {
     const user = await UserModel.findOne({ email: mail });
     if (!user) {
-      return res.status(404).json({ message: 'User not found!' });
+      return res.status(404).json({ message: 'User not found!!!!!' });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
@@ -77,13 +84,51 @@ app.post('/login', async (req, res) => {
       return res.status(400).json({ message: 'Invalid credentials!' });
     }
 
-    res.json({ message: 'Login successful!', user }); // Consider using authentication tokens here
+    // Create and assign a token
+    const token = jwt.sign({ _id: user._id }, 'your_secret_key', { expiresIn: '1h' });
+    res.header('auth-token', token).json({
+      message: 'Login successful!',
+      token,
+      user: {
+        _id: user._id, // safe to return
+        email: user.email, // safe to return
+        fullname: user.fullname // assuming you store fullname
+        // add other fields you might consider safe to return
+      }
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });
   }
 });
 
+app.post('/logout', (req, res) => {
+  res.send({ message: 'Logged out successfully' });  // Client should delete the token
+});
+
+
+const verifyToken = (req, res, next) => {
+  const token = req.header('auth-token');
+  if (!token) return res.status(401).send('Access Denied / Unauthorized request');
+
+  try {
+    const decoded = jwt.verify(token, 'your_secret_key');
+    req.user = decoded;
+    next();
+  } catch (error) {
+    res.status(400).send('Invalid token');
+  }
+};
+
+app.get('/verify', verifyToken, (req, res) => {
+  res.send({ verified: true });
+});
+
+app.get('/user-profile', verifyToken, (req, res) => {
+  UserModel.findById(req.user._id).select('-password')
+    .then(user => res.json(user))
+    .catch(err => res.status(500).json({ message: 'Error fetching user data' }));
+});
 
 
 

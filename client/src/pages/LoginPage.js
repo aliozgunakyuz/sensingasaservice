@@ -2,23 +2,23 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import './RegisterPage.css'; // Assuming the same styles can be shared
+import { useAuth } from "../components/AuthContex";
 
 function Login() {
     const [mail, setMail] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
+    const {login} = useAuth();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        axios.post('http://localhost:8001/login', { mail, password })
-            .then(response => {
-                console.log("Login successful:", response.data);
-                navigate('/dashboard'); // Redirect to dashboard on successful login
-            })
-            .catch(error => {
-                console.error("Login error:", error);
-                alert('Failed to log in!');
-            });
+        try {
+            await login(mail, password);  // Handle all login logic here
+            navigate('/dashboard');  // Redirect on success
+        } catch (error) {
+            console.error("Login error:", error);
+            alert('Failed to log in!');
+        }
     };
 
     return (

@@ -10,6 +10,7 @@ import UploadAPI from './pages/UploadAPI';
 import './mainApp.css';
 import Register from './pages/RegisterPage'
 import Login from './pages/LoginPage'
+import { AuthProvider } from './components/AuthContex';
 
 const MainApp = ({ setSelectedVideo }) => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -36,11 +37,12 @@ const MainApp = ({ setSelectedVideo }) => {
   return (
 
       <div>
+        <AuthProvider>
         <NavigationBar />
         <Sidebar />
         <ProgressBar currentStep={currentStep} totalSteps={3} />
         <main className="main-content">
-            <Routes>
+          <Routes>
               <Route path="/" element={<DashboardPage />} />
               <Route path="/register" element={<Register />} />
               <Route path="/login" element={<Login />} />
@@ -54,6 +56,7 @@ const MainApp = ({ setSelectedVideo }) => {
               <Route path="/uploadapi" element={<UploadAPI />} />
             </Routes>
         </main>
+        </AuthProvider>
       </div>
 
   );
