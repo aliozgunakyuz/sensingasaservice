@@ -34,7 +34,6 @@
     width: 50px; /* Adjust length as needed */
     height: 2px;
     background-color: green;
-    margin: 0 20px; /* Adjust distance between circles */
   }
   
   /* If you want to add arrows with an arrowhead, you can use pseudo-elements */

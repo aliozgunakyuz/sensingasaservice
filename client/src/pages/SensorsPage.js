@@ -45,8 +45,8 @@ function SensorsPage({ onVideoSelect }) {
   };
 
   return (
-    <div className='container'>
-      <header className='header'>
+    <div className='sensor-container'>
+      <header className='sensor-header'>
         <h1>Select a Camera</h1>
       </header>
       <div className="cameras">
@@ -62,8 +62,9 @@ function SensorsPage({ onVideoSelect }) {
         ))}
       </div>
       <div className="navigation">
-        <button className="button buttonExit" onClick={() => console.log('Exit')}>EXIT</button>
-        <button className="button" onClick={handleNavigateToML}>NEXT →</button>
+      <button className="sensor-button sensor-buttonExit" onClick={() => console.log('Exit')}>EXIT</button>
+
+        <button className="sensor-button" onClick={handleNavigateToML}>NEXT →</button>
       </div>
     </div>
   );

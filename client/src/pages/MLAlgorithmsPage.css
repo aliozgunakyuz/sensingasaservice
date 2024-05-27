@@ -2,38 +2,40 @@
 .ml-page-container {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   height: 100vh;
+  justify-content: space-around; /* Adjusts content to be spaced optimally within the container */
+  overflow: hidden; /* Ensures no scrolling occurs */
 }
 
 .algorithm-selection {
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* This will distribute space between header, content and navigation */
-  height: calc(100vh - 100px); /* Adjust the 60px to account for any fixed headers or footers outside the main content */
+  justify-content: space-around; /* Better distributes space between elements */
+  height: 100%; /* Takes full available height */
+  padding: 0; /* Removes any default padding */
 }
-
 
 .header {
   text-align: center;
-  background-color: #ffffff; 
-  padding: 1em 0;
+  background-color: #ffffff;
+  padding: 0.5em 0; /* Reduces padding, adjusting space to be tighter */
   color: #007bff;
-}
-
-.algorithm-selection h2 {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between; /* This will distribute space between header, content and navigation */
-  height: calc(100vh - 60px);
+  margin-bottom: 20px; /* Reduces bottom margin to bring header closer to algorithms */
 }
 
 .algorithms {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1em;
-  padding: 1em;
+  gap: 10px; /* Slightly closer together, but still spacious */
+  margin-bottom: 20px; /* Reduces bottom margin to bring algorithms closer to navigation */
 }
+
+.navigation {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px; /* Enough padding for aesthetic spacing */
+}
+
 
 .algorithm {
   border: 0.0625em solid #d0d0d0;
@@ -50,12 +52,7 @@
   border-width: 0.125em;
 }
 
-.navigation {
-  display: flex;
-  justify-content: space-between;
-  padding: 1em;
-  background-color: #ffffff;
-}
+
 
 .button {
   padding: 0.625em 1.25em;

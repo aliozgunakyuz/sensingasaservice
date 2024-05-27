@@ -10,6 +10,19 @@
     padding: 1em 0;
     color: #007bff;
   }
+  .walkthrough-button {
+    background: #ebecee;
+    border: 2px solid #b4b9be;
+    border-radius: 50%;
+    font-size: 24px;
+    cursor: pointer;
+    color: #007BFF;
+    transition: background 0.3s, border 0.3s;
+  }
+  
+  .walkthrough-button:hover {
+    color: #0056b3;
+  }
 
   .input-container {
     padding: 10px;

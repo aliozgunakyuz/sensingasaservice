@@ -3,6 +3,7 @@ import './UploadAPI.css';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import CodeBlock from './CodeBlock';
+import WalkthroughModal from '../components/WalkthroughModal';
 
 function UploadAPI() {
   const [inputValue, setInputValue] = useState('');
@@ -11,13 +12,15 @@ function UploadAPI() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [applet_id, setAppletID] = useState('');
   const [userChoice, setUserChoice] = useState(null); // Default choice is null
+  const [walkthroughStep, setWalkthroughStep] = useState(0);
+  const [showWalkthrough, setShowWalkthrough] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
   const detections = location.state?.detections;
 
   useEffect(() => {
-    if (Array.isArray(detections?.results)) {
-      const formattedDetections = detections.results.map(detection => JSON.stringify(detection, null, 2)).join('\n');
+    if (Array.isArray(detections?.response)) {
+      //const formattedDetections = detections.results.map(detection => JSON.stringify(detection, null, 2)).join('\n');
     } else {
       console.error('Detections is not an array:', detections);
     }
@@ -82,15 +85,9 @@ function UploadAPI() {
   };
 
   const handleNext = async () => {
-    if (detections && detections.results && Array.isArray(detections.results)) {
-      const responsee = detections.results[detections.results.length - 1].response;
-
-      if (!applet_id) {
-        alert('Applet ID is not set');
-        return;
-      }
-
-      const formattedData = responsee.map((detection, index) => ({
+    // Check if detections is available and has a response property which is an array
+    if (detections && Array.isArray(detections.response)) {
+      const formattedData = detections.response.map((detection, index) => ({
         name: `Detection ${index}`,
         value: {
           bbox: detection.bbox,
@@ -98,11 +95,9 @@ function UploadAPI() {
           confidence: detection.confidence,
         },
       }));
-
-      console.log("formattedData: ", formattedData);
-      
   
-
+      console.log("Formatted data for API:", formattedData);
+  
       try {
         const url = `http://localhost:5003/get_inference/${applet_id}`;
         const response = await axios.post(url, { data: formattedData }, {
@@ -116,9 +111,12 @@ function UploadAPI() {
         alert('Failed to send data to execute_api');
       }
     } else {
-      console.error('Detections results not found or not an array');
-    }  
+      console.error('Detections response not found or not an array:', detections);
+      alert('Detection data is malformed or missing');
+    }
   };
+  
+  
 
   const handleCodeWritingComplete = async () => {
     const trimmedCode = codeInputValue.trim();
@@ -146,11 +144,34 @@ function UploadAPI() {
     setSelectedFile(null); // Reset selected file if user chooses to upload file
   };
 
+  const handleWalkthroughNext = () => {
+    if (walkthroughStep < 5) { // Updated to match the number of steps
+      setWalkthroughStep(walkthroughStep + 1);
+    } else {
+      setShowWalkthrough(false);
+    }
+  };
+
+  const handleWalkthroughPrevious = () => {
+    if (walkthroughStep > 0) {
+      setWalkthroughStep(walkthroughStep - 1);
+    }
+  };
+
   return (
     <div className="sensing-service-page">
       <header className='header'>
         <h1>Upload API</h1>
+        <button className="walkthrough-button" onClick={() => setShowWalkthrough(true)}>?</button>
       </header>
+      {showWalkthrough && (
+        <WalkthroughModal 
+          step={walkthroughStep} 
+          onNext={handleWalkthroughNext} 
+          onPrevious={handleWalkthroughPrevious} 
+          onClose={() => setShowWalkthrough(false)} 
+        />
+      )}
       <div className="choice-container">
         <button className={`button ${userChoice === 'writeCode' ? 'active' : ''}`} onClick={() => handleUserChoice('writeCode')}>
           Write Code

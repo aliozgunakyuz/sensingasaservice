@@ -11,6 +11,7 @@ function NavigationBar() {
       <div className="nav-links">
         {user ? (
           <>
+            <NavLink to="/pipeline" className="nav-link">Create Pipeline</NavLink>
             <NavLink to="/user-profile" className="nav-link">Profile</NavLink>
             <button onClick={logout} className="nav-link">Logout</button>
           </>

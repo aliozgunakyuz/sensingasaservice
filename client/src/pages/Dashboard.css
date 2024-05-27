@@ -1,0 +1,85 @@
+/* Dashboard.css */
+
+.dashboard-container {
+    background-color: #f0f2f5;
+    min-height: 100vh;
+    padding-top: 60px; /* Adjust based on the height of your navigation bar */
+  }
+  
+  .dashboard-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .dashboard-content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    max-width: 1500px;
+    width: 100%;
+    background: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  .left-content {
+    flex: 1;
+    padding: 20px 40px;
+  }
+  
+  .left-content h1 {
+    color: #007bff;
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+  }
+  
+  .left-content p {
+    font-size: 1.1rem;
+    color: #555;
+    line-height: 1.6;
+  }
+  
+  .right-content {
+    flex: 1.5; /* Increased flex value to make the image section larger */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background: #f8f9fa;
+  }
+  
+  .image-credit {
+    text-align: center;
+    font-size: 1rem;
+    color: #555;
+  }
+  
+  .image-credit a {
+    color: #007bff;
+    text-decoration: none;
+  }
+  
+  .image-credit a:hover {
+    text-decoration: underline;
+  }
+  
+  @media (max-width: 768px) {
+    .dashboard-content {
+      flex-direction: column;
+    }
+  
+    .left-content, .right-content {
+      padding: 20px;
+    }
+  
+    .left-content h1 {
+      font-size: 2rem;
+    }
+  
+    .right-content {
+      flex: 1; /* Reset flex value for smaller screens */
+    }
+  }
+    

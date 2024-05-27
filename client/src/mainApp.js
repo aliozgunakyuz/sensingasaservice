@@ -4,17 +4,20 @@ import NavigationBar from './components/NavigationBar';
 import Sidebar from './components/Sidebar';
 import ProgressBar from './pages/ProgressBar';
 import DashboardPage from './pages/DashboardPage';
+import AuthenticatedDashboardPage from './pages/AuthenticatedDashboardPage'; // Import the new component
 import SensorsPage from './pages/SensorsPage';
 import MLAlgorithmsPage from './pages/MLAlgorithmsPage';
 import UploadAPI from './pages/UploadAPI';
 import './mainApp.css';
-import Register from './pages/RegisterPage'
-import Login from './pages/LoginPage'
-import { AuthProvider } from './components/AuthContex';
+import Register from './pages/RegisterPage';
+import Login from './pages/LoginPage';
+import { AuthProvider, useAuth } from './components/AuthContex.js'; // Ensure the correct path
+import PipelinePage from './pages/Pipeline';
 
 const MainApp = ({ setSelectedVideo }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const location = useLocation();
+  const { user } = useAuth(); // Get the user from AuthContext
 
   useEffect(() => {
     switch (location.pathname) {
@@ -33,32 +36,22 @@ const MainApp = ({ setSelectedVideo }) => {
     }
   }, [location]);
 
-
   return (
-
-      <div>
-        <AuthProvider>
-        <NavigationBar />
-        <Sidebar />
-        <ProgressBar currentStep={currentStep} totalSteps={3} />
-        <main className="main-content">
-          <Routes>
-              <Route path="/" element={<DashboardPage />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/dashboard" element={<DashboardPage />} />
-              <Route path="/sensors" element={
-              
-                  <SensorsPage onVideoSelect={setSelectedVideo} />
-                
-              } />
-              <Route path="/ml-algorithms" element={<MLAlgorithmsPage />} />
-              <Route path="/uploadapi" element={<UploadAPI />} />
-            </Routes>
-        </main>
-        </AuthProvider>
-      </div>
-
+    <div>
+      <NavigationBar />
+      <main className="main-content">
+        <Routes>
+          <Route path="/" element={user ? <AuthenticatedDashboardPage /> : <DashboardPage />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/dashboard" element={user ? <AuthenticatedDashboardPage /> : <DashboardPage />} />
+          <Route path="/pipeline" element={<PipelinePage />} />
+          <Route path="/sensors" element={<SensorsPage onVideoSelect={setSelectedVideo} />} />
+          <Route path="/ml-algorithms" element={<MLAlgorithmsPage />} />
+          <Route path="/uploadapi" element={<UploadAPI />} />
+        </Routes>
+      </main>
+    </div>
   );
 };
 

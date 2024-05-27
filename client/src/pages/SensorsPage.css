@@ -1,68 +1,82 @@
 /* SensorsPage.css */
-.container {
+
+Copy code
+.sensor-container {
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* This will space out the children */
-  height: 100vh; /* Use 100% of the viewport height */
+  justify-content: space-between; /* Helps in distributing space */
+  height: 100vh; /* Full viewport height */
+  margin: 0; /* Removes default margin */
+  overflow: hidden; /* Hides any content that overflows */
 }
 
+.sensor-header {
+  flex: 0 1 auto; /* Flexible, but not growing beyond content size */
+  text-align: center;
+  background-color: #ffffff;
+  padding: 1em 0;
+  color: #007bff;
+}
   
-  .header {
-    text-align: center;
-    background-color: #ffffff; 
-    padding: 1em 0;
-    color: #007bff;
-  }
+.cameras {
+  flex: 1 1 auto; /* Grows to use available space, but can also shrink */
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1em;
+  padding: 1em;
+  overflow-y: auto; /* Allows scrolling within the grid if necessary */
+  text-align: center;
+}
+
+.navigation {
+  flex: 0 1 auto; /* Flexible, but not growing beyond content size */
+  display: flex;
+  justify-content: space-between;
+  padding: 1em;
+  background-color: #ffffff;
+}
   
-  .cameras {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1em;
-    padding: 1em;
-    text-align: center;
-  }
-  
-  .camera {
+.camera {
     border: 0.0625em solid #d0d0d0;
     padding: 0.5em;
     cursor: pointer;
     background-color: #fff;
-  }
+}
   
-  .camera.selected {
+.camera.selected {
     border-color: blue;
-  }
+}
   
-  .camera .video {
-    max-width: 100%;
+.camera .video {
+    max-width: 80%;
     height: auto;
-  }
+}
   
-  .cameraName {
+.cameraName {
     margin-top: 0.5em;
-  }
+}
   
-  .navigation {
-    display: flex;
-    justify-content: space-between;
-    padding: 1em;
-    background-color: #ffffff;
-  }
+.sensor-button {
+  padding: 0.625em 1.25em;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  background-color: #007bff;
+  color: white;
+}
+
+.sensor-buttonExit {
+  background-color: #dc3545;
+  color: white;
+}
   
-  .button {
-    padding: 0.625em 1.25em;
-    border: none;
-    cursor: pointer;
-    font-weight: bold;
-  }
-  
-  .buttonExit {
-    background-color: #dc3545;
-    color: white;
-  }
-  
-  .button:not(.buttonExit) {
+.sensor-button.sensor-buttonExit {
+  background-color: #dc3545;
+  color: white;
+}
+
+.sensor-button:not(.buttonExit) {
     background-color: #007bff;
     color: white;
-  }
+}
   

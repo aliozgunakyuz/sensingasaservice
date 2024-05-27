@@ -4,18 +4,22 @@ const bcrypt = require('bcrypt');
 const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
+const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
+const UserModel = require('./database/models/userModel.js');
+const ResultModel = require('./database/models/resultModel.js');
+const Applet = require('./database/models/appletModel.js'); // Import Applet model
+
 const app = express();
 const port = 8001;
-const mongoose = require('mongoose');
-const UserModel = require('./database/models/userModel.js')
 
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));  // Increase limit for JSON payloads
+app.use(express.urlencoded({ limit: '50mb', extended: true }));  // Increase limit for URL-encoded payloads
 
 app.use(cors({
     origin: 'http://localhost:3000', // or whichever port your React app is running on
     credentials: true
 }));
-
 
 const upload = multer({ dest: 'uploads/' });
 
@@ -43,7 +47,6 @@ app.get('/list_videos', (req, res) => {
 
 mongoose.connect("mongodb+srv://akyuz:NZcNy0uJtIjkZLyx@sensingservice.vglbr2p.mongodb.net/?retryWrites=true&w=majority&appName=SensingService")
 
-
 app.post('/register', async (req, res) => {
   const { fullname, mail, password } = req.body;
 
@@ -66,9 +69,6 @@ app.post('/register', async (req, res) => {
     res.status(500).json({ error: 'Failed to register user' });
   }
 });
-
-
-const jwt = require('jsonwebtoken');
 
 app.post('/login', async (req, res) => {
   const { mail, password } = req.body;
@@ -106,7 +106,6 @@ app.post('/logout', (req, res) => {
   res.send({ message: 'Logged out successfully' });  // Client should delete the token
 });
 
-
 const verifyToken = (req, res, next) => {
   const token = req.header('auth-token');
   if (!token) return res.status(401).send('Access Denied / Unauthorized request');
@@ -130,9 +129,83 @@ app.get('/user-profile', verifyToken, (req, res) => {
     .catch(err => res.status(500).json({ message: 'Error fetching user data' }));
 });
 
+app.post('/api/results/check', async (req, res) => {
+  const { modelname, camname } = req.body;
+  try {
+    const result = await ResultModel.findOne({ modelname, camname });
+    if (result) {
+      res.json({ exists: true, results: result.response });
+    } else {
+      res.json({ exists: false });
+    }
+  } catch (error) {
+    res.status(500).send('Error accessing the database');
+  }
+});
 
+app.post('/api/results/save', async (req, res) => {
+  console.log("Request body:", req.body);
+  const { modelname, camname, results } = req.body;
+  
+  if (!results || !results.results || results.results.length === 0) {
+    return res.status(400).send('No results available to save.');
+  }
+  
+  // Access the nested results array
+  const lastResult = results.results[results.results.length - 1];
+  console.log("Last result to save:", lastResult);
+  
+  try {
+    const newResult = new ResultModel({
+      modelname,
+      camname,
+      response: lastResult  // Ensure this contains the necessary fields expected by ResultModel
+    });
+    await newResult.save();
+    res.status(201).send('Results saved successfully');
+  } catch (error) {
+    console.error("Error when saving results:", error);
+    const errorMessages = Object.values(error.errors).map(err => err.message);
+    res.status(500).send(`Error saving results to the database: ${errorMessages.join(', ')}`);
+  }
+});
+
+// Route to fetch user's pipelines
+app.get('/api/user_pipelines', verifyToken, async (req, res) => {
+  const userId = req.user._id;
+
+  try {
+    const pipelines = await Applet.find({ userId });
+    res.status(200).json(pipelines);
+  } catch (error) {
+    console.error('Error fetching user pipelines:', error);
+    res.status(500).json({ message: 'Failed to fetch user pipelines', error });
+  }
+});
+
+
+// Route to save pipeline data
+app.post('/api/save_pipeline', verifyToken, async (req, res) => {
+  const { appletName, appletId, camList, mlModelList } = req.body;
+  const userId = req.user._id;
+
+  try {
+    const newApplet = new Applet({
+      appletName,
+      appletId,
+      camList,
+      mlModelList,
+      userId
+    });
+
+    await newApplet.save();
+    res.status(200).json({ message: 'Pipeline saved successfully' });
+  } catch (error) {
+    console.error('Error saving pipeline:', error);
+    res.status(500).json({ message: 'Failed to save pipeline', error });
+  }
+});
 
 app.listen(port, () => {
   console.log(`Sunucu ${port} numaralı portta çalışıyor.`);
 });
-

@@ -14,7 +14,7 @@ function MLAlgorithmsPage() {
 
     const algorithms = [
       { id: 'yolo', name: 'YOLO' },
-      { id: 'algorithm2', name: 'Algorithm 2' },
+      { id: 'algorithm2', name: 'Emotion Detection' },
       { id: 'algorithm3', name: 'Algorithm 3' },
       { id: 'algorithm4', name: 'Algorithm 4' },
       { id: 'algorithm5', name: 'Algorithm 5' },
@@ -31,34 +31,79 @@ function MLAlgorithmsPage() {
     const handleUpload = () => {
       return new Promise((resolve, reject) => {
         if (selectedVideo.src && selectedAlgorithm) {
-            fetch(selectedVideo.src)
-                .then(response => response.blob())
-                .then(blob => {
-                    const formData = new FormData();
-                    const file = new File([blob], selectedVideo.name, { type: "video/mp4" });
-                    formData.append('file', file);
-                    console.log("Formdata Results:", formData);
-                    return fetch('http://localhost:5002/process_video', {
-                        method: 'POST',
-                        body: formData,
-                    });
+          // First, check if the results already exist in the database
+          fetch(`http://localhost:8001/api/results/check`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              modelname: selectedAlgorithm,
+              camname: selectedVideo.name,
+            }),
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.exists && data.results) {
+              // If results exist, set detections to existing results
+              console.log("Fetching results from database:", data.results);
+              setDetections(data.results);
+              resolve(data.results);
+            } else {
+              // If not, proceed to run Docker and process the video
+              console.log("No existing data found, processing video...");
+              fetch(selectedVideo.src)
+              .then(response => response.blob())
+              .then(blob => {
+                const formData = new FormData();
+                const file = new File([blob], selectedVideo.name, { type: "video/mp4" });
+                formData.append('file', file);
+                return fetch('http://localhost:5002/process_video', {
+                  method: 'POST',
+                  body: formData,
+                });
+              })
+              .then(response => response.json())
+              .then(newData => {
+                console.log("Processing Results:", newData);
+                // Save new results to database
+                fetch('http://localhost:8001/api/results/save', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({
+                    modelname: selectedAlgorithm,
+                    camname: selectedVideo.name,
+                    results: newData,
+                  }),
                 })
-                .then(response => response.json())
-                .then(data => {
-                    console.log("Processing Results:", data);
-                    setDetections(data);
-                    resolve(data); // Resolve the promise with the detection data
+                .then(() => {
+                  setDetections(newData);
+                  resolve(newData);
                 })
                 .catch(error => {
-                    console.error('Error:', error);
-                    reject(error); // Reject the promise if there's an error
+                  console.error('Error saving results to database:', error);
+                  reject(error);
                 });
+              })
+              .catch(error => {
+                console.error('Error processing video:', error);
+                reject(error);
+              });
+            }
+          })
+          .catch(error => {
+            console.error('Error checking database:', error);
+            reject(error);
+          });
         } else {
-            console.error('No video selected or algorithm not selected');
-            reject('No video selected or algorithm not selected');
+          console.error('No video selected or algorithm not selected');
+          reject('No video selected or algorithm not selected');
         }
       });
     };
+    
     
     const handleNext = async () => {
       if (selectedAlgorithm && selectedVideo) {
@@ -105,7 +150,6 @@ function MLAlgorithmsPage() {
           <header className='header'>
             <h1>Select Your Algorithm</h1>
           </header>
-          <div> {selectedVideo.src} </div>
           <div className="algorithms">
             {algorithms.map((algo) => (
               <div

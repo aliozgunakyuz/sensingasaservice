@@ -8,8 +8,13 @@ const ProgressBar = (props) => {
       width: '100%',
       backgroundColor: "#e0e0de",
       borderRadius: 50,
-      margin: 50
+      marginTop: 80,
+      marginRight: 80,
+      marginBottom: 80,
+      marginLeft: 2,
     }
+    
+    
   
     const fillerStyles = {
       height: '100%',
@@ -21,13 +26,12 @@ const ProgressBar = (props) => {
     }
   
     const labelStyles = {
-      padding: 60,
       color: 'white',
       fontWeight: 'bold'
     }
   
     return (
-      <div style={{ padding: '20px 0' }}>
+      <div style={{ padding: '5px 0' }}>
         <div style={containerStyles}>
           <div style={fillerStyles}>
             <span style={labelStyles}>{`Step ${currentStep} of ${totalSteps}`}</span>

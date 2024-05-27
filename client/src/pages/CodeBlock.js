@@ -1,9 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import CodeMirror from '@uiw/react-codemirror';
 import { python } from '@codemirror/lang-python';  // Import Python language support
 
-function CodeBlock({ onCodeInputChange }) {
-  const [value, setValue] = React.useState("# Write your Python code here\nprint('Hello, world!')");  // Default Python code
+function CodeBlock({ onCodeInputChange, codeValue }) {
+  const [value, setValue] = React.useState(codeValue || "# Write your Python code here\nprint('Hello, world!')");  // Default Python code
+
+  useEffect(() => {
+    if (codeValue !== value) {
+      setValue(codeValue);
+    }
+  }, [codeValue]);
 
   const onChange = React.useCallback((val, viewUpdate) => {
     console.log('val:', val);
