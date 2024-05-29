@@ -13,6 +13,7 @@
   width: 100%;
   padding: 10px;
   color: #007BFF;
+  background-color: #f4f4f9;
 }
 
 header h1 {
@@ -104,6 +105,8 @@ header h1 {
 }
 
 .submitted-values-container {
+  align-items: center;
+  justify-content: center;
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
@@ -132,6 +135,8 @@ header h1 {
   flex-direction: column;
   align-items: center;
   margin-bottom: 20px;
+  margin-left: 20px;
+  padding: 30px 30px;
 }
 
 .pipeline-input-label {

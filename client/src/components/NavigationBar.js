@@ -1,18 +1,18 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from './AuthContex';
+import './NavigationBar.css'
 
 function NavigationBar() {
   const { user, logout } = useAuth();
 
   return (
     <div className="navigation-bar">
-      <div className="nav-title">Sensing as a Service</div>
+      <NavLink to="/dashboard" className="nav-title">Sensing as a Service</NavLink>
       <div className="nav-links">
         {user ? (
           <>
             <NavLink to="/pipeline" className="nav-link">Create Pipeline</NavLink>
-            <NavLink to="/user-profile" className="nav-link">Profile</NavLink>
             <button onClick={logout} className="nav-link">Logout</button>
           </>
         ) : (

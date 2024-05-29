@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './Pipeline.css';
 import CodeBlock from './CodeBlock';
 import WalkthroughModal from '../components/WalkthroughModal';
+import ConfirmModal from '../components/Popup.js';  // Import the ConfirmModal component
 import axios from 'axios';
 import { useAuth } from '../components/AuthContex.js';  // Ensure this path is correct
 
@@ -22,31 +23,37 @@ function Pipeline() {
   const [userChoice, setUserChoice] = useState(null);
   const [walkthroughStep, setWalkthroughStep] = useState(0);
   const [showWalkthrough, setShowWalkthrough] = useState(false);
-  const [pipelineName, setPipelineName] = useState(''); // New state for pipeline name
+  const [pipelineName, setPipelineName] = useState('');
+  const [isPipelineNameValid, setIsPipelineNameValid] = useState(true); // New state for pipeline name validation
+  const [isModalOpen, setIsModalOpen] = useState(false);  // State to handle modal visibility
+  const [modalMessage, setModalMessage] = useState('');  // State to handle modal message
+  const [customConfirm, setCustomConfirm] = useState(false);  // State to handle custom confirmation
+  const [isProcessing, setIsProcessing] = useState(false);  // State to handle processing modal
 
   const userId = getUserId();  // Get the user ID
 
   // Example codes
   const personCountCode = `# personCount.py example code
-  def execute(**kwargs):
+def execute(**kwargs):
     
-    total_person_count = 0
-    for key, value in kwargs.items():
-      if isinstance(value, dict) and value.get('class_name') == 'person':
-        total_person_count += 1
+  total_person_count = 0
+  for key, value in kwargs.items():
+    if isinstance(value, dict) and value.get('class_name') == 'person':
+      total_person_count += 1
 
-    return total_person_count`;
+  return total_person_count`;
 
   const carCountCode = `# carCount.py example code
-  def execute(**kwargs):
+def execute(**kwargs):
 
-    total_car_count = 0
+  total_car_count = 0
 
-    for key, value in kwargs.items():
-      if isinstance(value, dict) and value.get('class_name') == 'car':
-          total_car_count += 1
+  for key, value in kwargs.items()){
+    if isinstance(value, dict) && value.get('class_name') == 'car':
+      total_car_count += 1;
+  }
 
-    return total_car_count`;
+  return total_car_count`;
 
   const algorithms = [
     { id: 'yolo', name: 'YOLO' },
@@ -90,6 +97,7 @@ function Pipeline() {
   };
 
   const processVideo = async () => {
+    setIsProcessing(true);  // Show the processing modal
     const response = await fetch(selectedVideo.src);
     const blob = await response.blob();
 
@@ -103,6 +111,7 @@ function Pipeline() {
     });
 
     const processData = await processResponse.json();
+    setIsProcessing(false);  // Hide the processing modal
     return processData;
   };
 
@@ -120,7 +129,7 @@ function Pipeline() {
     });
   };
 
-  const handleUploadAPI = async (results, appletID) => {
+  const handleUploadAPI = async (results, appletID, pythonCode) => {
     const standardizedResults = results.results || results.response || results;
 
     if (!standardizedResults || !Array.isArray(standardizedResults)) {
@@ -148,7 +157,7 @@ function Pipeline() {
       console.log('Execute API response:', response.data);
 
       // Save pipeline data to the database
-      await savePipelineData(appletID, response.data);
+      await savePipelineData(appletID, pythonCode);
 
     } catch (error) {
       console.error('Error sending data to execute_api:', error);
@@ -156,20 +165,21 @@ function Pipeline() {
     }
   };
 
-  const savePipelineData = async (appletID, apiResponse) => {
+  const savePipelineData = async (appletID, pythonCode) => {
     try {
       const response = await axios.post('http://localhost:8001/api/save_pipeline', {
         appletName: pipelineName,
         appletId: appletID,
         camList: [selectedVideo.name],
         mlModelList: [selectedAlgorithm],
-        userId: userId // Use the actual user ID
+        userId: userId, // Use the actual user ID
+        pythonCode: pythonCode // Include the Python code
       }, {
         headers: {
           'auth-token': token,  // Include the token in the request headers
         }
       });
-
+  
       if (response.status === 200) {
         console.log('Pipeline saved successfully');
         navigate('/dashboard'); // Redirect to dashboard after saving
@@ -180,12 +190,28 @@ function Pipeline() {
       console.error('Error saving pipeline:', error);
     }
   };
+  
+  
 
   const handleFinish = async () => {
     try {
+      // Ensure pipeline name is provided
+      if (!pipelineName.trim()) {
+        setModalMessage('Please enter a pipeline name.');
+        setIsModalOpen(true);
+        return;
+      }
+
+      // Ensure file is uploaded if user choice is not write code
+      if (!selectedFile && userChoice !== 'writeCode') {
+        setModalMessage('Please upload a file.');
+        setIsModalOpen(true);
+        return;
+      }
+
       // Check database for existing results
       const checkData = await checkDatabase();
-
+  
       let results;
       if (checkData.exists && checkData.results) {
         console.log('Fetching results from database:', checkData.results);
@@ -194,28 +220,34 @@ function Pipeline() {
         // Process video if results not found
         console.log('No existing data found, processing video...');
         results = await processVideo();
-
+  
         // Save new results to database
         await saveResultsToDatabase(results);
       }
-
-      let appletID;
-
+  
+      let appletData;
+  
       // Ensure handleSubmit or handleCodeWritingComplete completes before proceeding
       if (userChoice === 'writeCode') {
-        appletID = await handleCodeWritingComplete();
+        appletData = await handleCodeWritingComplete();
       } else {
-        appletID = await handleSubmit();
+        appletData = await handleSubmit();
       }
-
-      // Handle API upload
-      await handleUploadAPI(results, appletID);
-
+  
+      if (appletData) {
+        // Handle API upload
+        await handleUploadAPI(results, appletData.appletId, appletData.pythonCode);
+  
+        // Save pipeline data with Python code
+        await savePipelineData(appletData.appletId, appletData.pythonCode);
+      }
     } catch (error) {
       alert('Failed to process video.');
       console.error(error);
     }
   };
+  
+  
 
   const handleSelectAlgorithm = (id) => {
     setSelectedAlgorithm(id);
@@ -227,7 +259,6 @@ function Pipeline() {
 
   const handleCodeInputChange = (value) => {
     setCodeInputValue(value);
-    setInputValue(value);
   };
 
   const handleInputKeyPress = (event) => {
@@ -250,41 +281,66 @@ function Pipeline() {
 
   const handleSubmit = async () => {
     if (!selectedFile && userChoice !== 'writeCode') {
-      alert('Please select a file to upload');
+      setModalMessage('Please upload a file.');
+      setIsModalOpen(true);
       return null;
     }
-
+  
+    let pythonCode = '';
+    if (selectedFile) {
+      pythonCode = await readFileContent(selectedFile);
+    } else if (userChoice === 'writeCode') {
+      pythonCode = codeInputValue.trim();
+    }
+  
     const formData = new FormData();
     if (selectedFile) {
       formData.append('in_file', selectedFile);
     } else if (userChoice === 'writeCode') {
-      const blob = new Blob([codeInputValue.trim()], { type: 'text/plain' });
+      const blob = new Blob([pythonCode], { type: 'text/plain' });
       const file = new File([blob], 'script.py', { type: 'text/x-python' });
       formData.append('in_file', file);
     }
-    formData.append('dependencies', submittedValues.join(' '));
-
+    formData.append('dependencies', submittedValues);
+  
     try {
       const response = await axios.post('http://localhost:5003/deployapi', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-      alert('Upload successful');
       console.log('Applet ID:', response.data.applet_id);
       setAppletID(response.data.applet_id);
-      return response.data.applet_id; // Return the applet_id
+      return { appletId: response.data.applet_id, pythonCode }; // Return the applet_id and pythonCode
     } catch (error) {
       console.error('Error uploading file:', error);
       alert('Error uploading file');
       return null;
     }
   };
+  
+  // Helper function to read file content
+  const readFileContent = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        resolve(event.target.result);
+      };
+      reader.onerror = (event) => {
+        reject(event.target.error);
+      };
+      reader.readAsText(file);
+    });
+  };
+  
+  
+  
 
   const handleCodeWritingComplete = async () => {
     const trimmedCode = codeInputValue.trim();
     if (!trimmedCode) {
-      alert('Please write some code before completing.');
+      setModalMessage('Please write some code before completing.');
+      setCustomConfirm(true); // Open the modal for custom confirmation
       return null;
     }
 
@@ -331,6 +387,13 @@ function Pipeline() {
 
   const handlePipelineNameChange = (event) => {
     setPipelineName(event.target.value);
+    setIsPipelineNameValid(true); // Reset validation state on input change
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setCustomConfirm(false); // Close custom confirmation modal
+    setModalMessage('');
   };
 
   return (
@@ -347,15 +410,16 @@ function Pipeline() {
         />
       )}
       <div className="pipeline-section">
-        <label htmlFor="pipeline-name">Pipeline Name</label>
+        <h2 htmlFor="pipeline-name">Pipeline Name</h2>
         <input
           id="pipeline-name"
           type="text"
           value={pipelineName}
           onChange={handlePipelineNameChange}
-          className="pipeline-input"
+          className={`pipeline-input ${isPipelineNameValid ? '' : 'invalid'}`} // Apply conditional class
           placeholder="Enter pipeline name"
         />
+        {!isPipelineNameValid && <p className="error-text">Pipeline name is required.</p> }
       </div>
       <div className="pipeline-section">
         <h2>Select a Camera</h2>
@@ -406,6 +470,8 @@ function Pipeline() {
             <div className="input-container">
               <input
                 type="text"
+                value={inputValue}
+                onChange={handleInputChange}
                 onKeyPress={handleInputKeyPress}
                 placeholder="Enter library names and press enter"
               />
@@ -454,6 +520,20 @@ function Pipeline() {
       <div className="footer">
         <button className="button" onClick={handleFinish}>Finish</button>
       </div>
+      <ConfirmModal
+        isOpen={isModalOpen || customConfirm}
+        onRequestClose={closeModal}
+        onConfirm={closeModal}
+        message={modalMessage}
+        showCancelButton={false}
+      />
+      <ConfirmModal
+        isOpen={isProcessing}
+        onRequestClose={() => setIsProcessing(false)}
+        onConfirm={() => setIsProcessing(false)}
+        message="Processing video, please wait..."
+        showCancelButton={false}
+      />
     </div>
   );
 }

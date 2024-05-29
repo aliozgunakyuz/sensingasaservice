@@ -45,7 +45,7 @@ app.get('/list_videos', (req, res) => {
   });
 });
 
-mongoose.connect("mongodb+srv://akyuz:NZcNy0uJtIjkZLyx@sensingservice.vglbr2p.mongodb.net/?retryWrites=true&w=majority&appName=SensingService")
+mongoose.connect("mongodb+srv://akyuz:NZcNy0uJtIjkZLyx@sensingservice.vglbr2p.mongodb.net/?retryWrites=true&w=majority&appName=SensingService");
 
 app.post('/register', async (req, res) => {
   const { fullname, mail, password } = req.body;
@@ -183,10 +183,9 @@ app.get('/api/user_pipelines', verifyToken, async (req, res) => {
   }
 });
 
-
 // Route to save pipeline data
 app.post('/api/save_pipeline', verifyToken, async (req, res) => {
-  const { appletName, appletId, camList, mlModelList } = req.body;
+  const { appletName, appletId, camList, mlModelList, pythonCode } = req.body;
   const userId = req.user._id;
 
   try {
@@ -195,16 +194,59 @@ app.post('/api/save_pipeline', verifyToken, async (req, res) => {
       appletId,
       camList,
       mlModelList,
-      userId
+      userId,
+      pythonCode
     });
 
     await newApplet.save();
+
+    // Add the new applet ID to the user's appletIds array
+    await UserModel.updateOne({ _id: userId }, { $push: { appletIds: newApplet._id } });
+
     res.status(200).json({ message: 'Pipeline saved successfully' });
   } catch (error) {
     console.error('Error saving pipeline:', error);
     res.status(500).json({ message: 'Failed to save pipeline', error });
   }
 });
+
+// Route to delete a pipeline
+// Route to delete a pipeline
+// Route to delete a pipeline
+// Route to delete a pipeline
+app.delete('/api/delete_pipeline/:id', verifyToken, async (req, res) => {
+  const pipelineId = req.params.id;
+  const userId = req.user._id;
+
+  try {
+    // Find the pipeline by ID and ensure it belongs to the user
+    const pipeline = await Applet.findById(pipelineId);
+
+    if (!pipeline) {
+      console.error('Pipeline not found');
+      return res.status(404).json({ message: 'Pipeline not found' });
+    }
+
+    if (pipeline.userId.toString() !== userId.toString()) {
+      console.error('Unauthorized attempt to delete pipeline');
+      return res.status(403).json({ message: 'Unauthorized' });
+    }
+
+    // Delete the pipeline
+    await Applet.findByIdAndDelete(pipelineId);
+
+    // Remove the pipeline ID from the user's appletIds array
+    await UserModel.updateOne({ _id: userId }, { $pull: { appletIds: pipelineId } });
+
+    res.status(200).json({ message: 'Pipeline deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting pipeline:', error);
+    res.status(500).json({ message: 'Failed to delete pipeline', error: error.message });
+  }
+});
+
+
+
 
 app.listen(port, () => {
   console.log(`Sunucu ${port} numaralı portta çalışıyor.`);

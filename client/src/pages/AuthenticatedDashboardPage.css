@@ -1,55 +1,95 @@
 .dashboard-container {
-    padding: 20px;
-    background-color: #f4f4f9;
-    min-height: 100vh;
-  }
-  
-  .dashboard-container h1 {
-    text-align: center;
-    color: #007BFF;
-    margin-bottom: 20px;
-    font-size: 2.5rem;
-  }
-  
-  .dashboard-container h2 {
-    color: #333;
-    text-align: center;
-    margin-bottom: 30px;
-    font-size: 1.8rem;
-  }
-  
-  .pipelines-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
-  }
-  
-  .pipeline-card {
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    max-width: 300px;
-    width: 100%;
-    transition: transform 0.2s;
-  }
-  
-  .pipeline-card:hover {
-    transform: translateY(-5px);
-  }
-  
-  .pipeline-card h3 {
-    color: #007BFF;
-    margin-bottom: 15px;
-  }
-  
-  .pipeline-card p {
-    color: #555;
-    margin-bottom: 10px;
-  }
-  
-  .pipeline-card p strong {
-    color: #333;
-  }
-  
+  padding: 20px;
+  background-color: #f4f4f9;
+  min-height: 100vh;
+}
+
+.dashboard-container h1 {
+  text-align: center;
+  color: #007BFF;
+  margin-bottom: 20px;
+  font-size: 2.5rem;
+}
+
+.dashboard-container h2 {
+  color: #333;
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 1.8rem;
+}
+
+.pipelines-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.pipeline-card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  max-width: 300px;
+  width: 100%;
+  transition: transform 0.2s;
+}
+
+.pipeline-card:hover {
+  transform: translateY(-5px);
+}
+
+.pipeline-card h3 {
+  color: #007BFF;
+  margin-bottom: 15px;
+}
+
+.pipeline-card p {
+  color: #555;
+  margin-bottom: 10px;
+}
+
+.pipeline-card p strong {
+  color: #333;
+}
+
+.execute-button {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+  margin-top: 10px;
+}
+
+.execute-button:hover {
+  background-color: #218838;
+  transform: translateY(-3px);
+}
+
+.execute-button:active {
+  background-color: #1e7e34;
+  transform: translateY(0);
+}
+
+.delete-button {
+  background-color: red;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+  margin-top: 5px;
+  position: absolute; /* Add this line */
+  top: 15px; /* Adjust as needed */
+  right: 20px; /* Adjust as needed */
+}
+
+.delete-button:hover {
+  background-color: darkred;
+}

@@ -1,37 +1,49 @@
 .navigation-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: white;
-    color: #007bff;
-    padding: 10px 20px;
-  }
-  
-  .nav-title {
-    font-size: 1.5em;
-  }
-  
-  .nav-links {
-    display: flex;
-    gap: 10px;
-  }
-  
-  .nav-link {
-    font-weight: 600;
-    color: #007bff;
-    text-decoration: none;
-    padding: 5px 10px;
-    border-radius: 5px;
-  }
-  
-  .nav-link.active {
-    background-color: #007bff;
-    text-decoration: none;
-    color: white;
-  }
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  color: #007bff;
+  padding: 10px 20px;
+  text-decoration: none;
+}
 
-  .nav-link:hover:not(.active) {
-    text-decoration: none;
-    color: #005fc4;
-  }
-  
+.nav-title {
+  font-size: 1.5em;
+  color: #007bff; /* Ensure the title color matches the links */
+  text-decoration: none; /* Remove the underline */
+}
+
+.nav-title:hover,
+.nav-title:focus,
+.nav-title:active {
+  text-decoration: none; /* Ensure no underline on hover, focus, or active states */
+}
+
+.nav-links {
+  display: flex;
+  text-decoration: none;
+  gap: 10px;
+}
+
+.nav-link {
+  font-weight: 600;
+  color: #555555;
+  text-decoration: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.nav-link.active {
+  text-decoration: none;
+  color: white;
+}
+.nav-new-title.active {
+  text-decoration: none;
+  color: #007bff;;
+}
+
+.nav-link:hover:not(.active) {
+  text-decoration: none;
+  color: #005fc4;
+}

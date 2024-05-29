@@ -143,6 +143,7 @@ yourFunction(**data)
   return (
     <div className="walkthrough-modal">
       <div className="walkthrough-content">
+        <button className="close-button" onClick={onClose}>X</button>
         <h2>{steps[step].title}</h2>
         <div>{steps[step].content}</div>
         <div className="walkthrough-buttons">
