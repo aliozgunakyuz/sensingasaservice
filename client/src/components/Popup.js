@@ -28,24 +28,29 @@ const ConfirmModal = ({ isOpen, onRequestClose, onConfirm, message, showCancelBu
       style={customStyles}
       contentLabel="Confirm Action"
     >
-      <h2 style={{ marginBottom: '20px', color: '#333' }}>Confirm Action</h2>
-      <div style={{ marginBottom: '20px', color: '#555' }}>{message}</div>
+      <h2 style={{ marginBottom: '20px', color: '#333' }}>{message}</h2>
       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
         {showCancelButton && (
           <button
             onClick={onRequestClose}
             style={{
-              backgroundColor: '#ccc',
-              color: '#333',
-              border: 'none',
+              backgroundColor: '#fff',
+              color: '#007BFF',
+              border: '2px solid #007BFF',
               borderRadius: '5px',
               padding: '10px 20px',
               cursor: 'pointer',
               marginRight: '10px',
-              transition: 'background-color 0.3s',
+              transition: 'background-color 0.3s, color 0.3s',
             }}
-            onMouseEnter={(e) => (e.target.style.backgroundColor = '#bbb')}
-            onMouseLeave={(e) => (e.target.style.backgroundColor = '#ccc')}
+            onMouseEnter={(e) => {
+              e.target.style.backgroundColor = '#007BFF';
+              e.target.style.color = '#fff';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.backgroundColor = '#fff';
+              e.target.style.color = '#007BFF';
+            }}
           >
             Cancel
           </button>
@@ -72,4 +77,3 @@ const ConfirmModal = ({ isOpen, onRequestClose, onConfirm, message, showCancelBu
 };
 
 export default ConfirmModal;
-

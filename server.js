@@ -210,9 +210,7 @@ app.post('/api/save_pipeline', verifyToken, async (req, res) => {
   }
 });
 
-// Route to delete a pipeline
-// Route to delete a pipeline
-// Route to delete a pipeline
+
 // Route to delete a pipeline
 app.delete('/api/delete_pipeline/:id', verifyToken, async (req, res) => {
   const pipelineId = req.params.id;

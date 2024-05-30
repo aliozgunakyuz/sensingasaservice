@@ -20,6 +20,10 @@ header h1 {
   color: #007BFF; /* Set header color */
 }
 
+a {
+  color: #007BFF;
+}
+
 .walkthrough-button {
   background: none;
   border: none;
@@ -101,7 +105,7 @@ header h1 {
 }
 
 .input-container, .upload-button-container {
-  margin: 20px 0;
+  margin: 10px 0;
 }
 
 .submitted-values-container {
@@ -160,4 +164,24 @@ header h1 {
 .pipeline-input:focus {
   border-color: #0056b3;
   outline: none;
+}
+
+#exampleSelect {
+  background-color: #fff; /* White background for select */
+  color: #007BFF; /* Blue text */
+  border: 2px solid #007BFF; /* Blue border */
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+#exampleSelect:hover {
+  background-color: #f4f4f9; 
+}
+
+#exampleSelect option {
+  background-color: #fff; 
+  color: #007BFF; 
 }

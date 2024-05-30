@@ -14,21 +14,35 @@ const AuthenticatedDashboardPage = () => {
   useEffect(() => {
     const fetchPipelines = async () => {
       try {
+        if (!token) {
+          return;
+        }
+  
         const response = await axios.get('http://localhost:8001/api/user_pipelines', {
           headers: {
             'auth-token': token
           }
         });
+  
         setPipelines(response.data);
       } catch (error) {
-        console.error('Error fetching pipelines:', error);
+        if (error.response) {
+          console.error('Error response from server:', error.response.data);
+          console.error('Status code:', error.response.status);
+          console.error('Headers:', error.response.headers);
+        } else if (error.request) {
+          console.error('No response received:', error.request);
+        } else {
+          console.error('Error setting up request:', error.message);
+        }
       }
     };
-
+  
     if (user) {
       fetchPipelines();
     }
   }, [user, token]);
+  
 
   const deletePipeline = async (pipelineId) => {
     try {

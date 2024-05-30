@@ -484,8 +484,8 @@ def execute(**kwargs):
               ))}
             </div>
             <div className="content">
-              <label htmlFor="exampleSelect">Select an Example: </label>
-              <select id="exampleSelect" onChange={handleExampleChange}>
+              <label htmlFor="exampleSelect" style={{ color: '#007BFF', marginRight: '10px' }}>Select an Example: </label>
+              <select id="exampleSelect" onChange={handleExampleChange} style={{ marginBottom: '20px' }}>
                 <option value="">--Choose an example--</option>
                 <option value="personCount">PersonCount</option>
                 <option value="carCount">CarCount</option>
